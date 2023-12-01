@@ -1,7 +1,9 @@
 package com.imooc.mall.model.dao;
 
 import com.imooc.mall.model.pojo.Order;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface OrderMapper {
     int deleteByPrimaryKey(Integer id);
 

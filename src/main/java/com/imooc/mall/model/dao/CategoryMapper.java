@@ -1,7 +1,9 @@
 package com.imooc.mall.model.dao;
 
 import com.imooc.mall.model.pojo.Category;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface CategoryMapper {
     int deleteByPrimaryKey(Integer id);
 
