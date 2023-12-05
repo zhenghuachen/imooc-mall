@@ -26,6 +26,7 @@ public class UserServiceImpl implements UserService {
         // 查询用户名是否存在，不允许重名
         User result = userMapper.selectByName(userName);
         if(result != null) {
+            // 每一层都有分工，此Service层不应该直接触碰最终返回的内容（Controller层）；采用抛出异常的方法,编写统一异常
             throw new ImoocMallException(ImoocMallExceptionEnum.NAME_EXISTED);
         }
 
@@ -33,6 +34,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setUsername(userName);
         user.setPassword(password);
+        // insertSelective会对不为空的方法进行处理; count返回值为修改成功的数值条数
         int count =userMapper.insertSelective(user);
         // 处理插入失败异常
         if (count==0) {

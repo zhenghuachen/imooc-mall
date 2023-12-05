@@ -17,7 +17,7 @@ public class ApiRestResponse<T> {
 
     private static final String OK_MSG = "SUCCESS";
 
-    // 弹出生成构造函数快捷键：control + enter
+    // 弹出生成构造函数快捷键：control + enter; 可以通过右键找到generate，其右侧显示的是快捷键
     public ApiRestResponse(Integer status, String msg, T data) {
         this.status = status;
         this.msg = msg;
@@ -47,7 +47,7 @@ public class ApiRestResponse<T> {
         return new ApiRestResponse<>(code,msg);
     }
 
-    // 传入枚举类
+    // 传入枚举类, 新建枚举类可以将错误统一管理
     public static  <T> ApiRestResponse<T> error(ImoocMallExceptionEnum ex) {
         return new ApiRestResponse<>(ex.getCode(), ex.getMsg());
     }

@@ -29,6 +29,7 @@ public class UserController {
     }
 
     /**
+     * 注册方法
      * 注册这个方法的返回是ApiRestResponse
      */
     @PostMapping("/register")  // 定义URL
