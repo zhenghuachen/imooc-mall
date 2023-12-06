@@ -33,7 +33,13 @@ public class UserServiceImpl implements UserService {
         // 写到数据库
         User user = new User();
         user.setUsername(userName);
-        user.setPassword(password);
+        // 数据库存储的密码需要加密
+        try {
+            user.setPassword(MD5Utils.getMD5Str(password));
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        // user.setPassword(password);
         // insertSelective会对不为空的方法进行处理; count返回值为修改成功的数值条数
         int count =userMapper.insertSelective(user);
         // 处理插入失败异常
