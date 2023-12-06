@@ -1,6 +1,7 @@
 package com.imooc.mall.controller;
 
 import com.imooc.mall.common.ApiRestResponse;
+import com.imooc.mall.common.Constant;
 import com.imooc.mall.exception.ImoocMallException;
 import com.imooc.mall.exception.ImoocMallExceptionEnum;
 import com.imooc.mall.model.pojo.User;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpSession;
 
 /**
  * 用户控制器
@@ -48,5 +51,89 @@ public class UserController {
         }
         userService.register(userName, password);
         return ApiRestResponse.success();
+    }
+
+    /**
+     * 登录接口
+     *
+     */
+    @PostMapping("/login")
+    @ResponseBody
+    public ApiRestResponse login(@RequestParam("userName") String userName, @RequestParam("password") String password, HttpSession session) throws ImoocMallException {
+        // userName和password不能为空校验
+        if(StringUtils.isEmpty(userName)){
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_USER_NAME);
+        }
+        if(StringUtils.isEmpty(password)){
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_PASSWORD);
+        }
+        // 密码长度不能小于8位
+        if(password.length()<8){
+            return ApiRestResponse.error(ImoocMallExceptionEnum.PASSWORD_TOO_SHORT);
+        }
+        User user = userService.login(userName,password);
+        user.setPassword(null);  // 保存用户信息时，不保存密码；避免password被直接返回，导致不安全
+        session.setAttribute(Constant.IMOOC_MALL_USER, user);
+        return ApiRestResponse.success(user);
+    }
+
+    /**
+     * 更新个性签名
+     */
+    @PostMapping("/user/update")
+    @ResponseBody
+    public ApiRestResponse updateUserInfo(HttpSession session, @RequestParam String signature) throws ImoocMallException {
+        User currentUser = (User)session.getAttribute(Constant.IMOOC_MALL_USER);
+        // 没有找到用户登录信息
+        if (currentUser == null) {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_LOGIN);
+        }
+        User user = new User();
+        user.setId(currentUser.getId());   // ? 不太懂
+        user.setPersonalizedSignature(signature);
+        userService.updateInformation(user);
+        return ApiRestResponse.success();
+    }
+
+    /**
+     * 登出，清除session
+     */
+    @PostMapping("/user/logout")
+    @ResponseBody
+    public ApiRestResponse logout(HttpSession session){
+        session.removeAttribute(Constant.IMOOC_MALL_USER);
+        return ApiRestResponse.success();
+    }
+
+    /**
+     * 管理员登录接口
+     *
+     */
+    @PostMapping("/adminLogin")
+    @ResponseBody
+    public ApiRestResponse adminLogin(@RequestParam("userName") String userName, @RequestParam("password") String password, HttpSession session) throws ImoocMallException {
+        // userName和password不能为空校验
+        if(StringUtils.isEmpty(userName)){
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_USER_NAME);
+        }
+        if(StringUtils.isEmpty(password)){
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_PASSWORD);
+        }
+        // 密码长度不能小于8位
+        if(password.length()<8){
+            return ApiRestResponse.error(ImoocMallExceptionEnum.PASSWORD_TOO_SHORT);
+        }
+        User user = userService.login(userName,password);
+        // 校验是否为管理员
+        if (userService.checkAdminRole(user)) {
+            // 是管理员，执行操作
+            // 保存用户信息，不保存密码
+            user.setPassword(null);  // 保存用户信息时，不保存密码；避免password被直接返回，导致不安全
+            session.setAttribute(Constant.IMOOC_MALL_USER, user);
+            return ApiRestResponse.success(user);
+        } else {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_ADMIN);
+        }
+
     }
 }
