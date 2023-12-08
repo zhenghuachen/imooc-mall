@@ -55,10 +55,10 @@ public class UserController {
 
     /**
      * 登录接口
-     *
+     * 传参除了userName和password增加HttpSession 用来记录登录状态
      */
-    @PostMapping("/login")
-    @ResponseBody
+    @PostMapping("/login") // 定义URL
+    @ResponseBody  //Spring会自动将Controller方法的返回值转换为适当的响应格式（如JSON、XML等），并将其作为HTTP响应的实体内容返回。
     public ApiRestResponse login(@RequestParam("userName") String userName, @RequestParam("password") String password, HttpSession session) throws ImoocMallException {
         // userName和password不能为空校验
         if(StringUtils.isEmpty(userName)){
@@ -73,25 +73,32 @@ public class UserController {
         }
         User user = userService.login(userName,password);
         user.setPassword(null);  // 保存用户信息时，不保存密码；避免password被直接返回，导致不安全
+        /**
+         * session.setAttribute()方法用于将数据存储到会话中。会话是Web应用程序中存储用户数据的对象，通常用于保持用户状态和数据在多个请求之间。
+         * session.setAttribute()方法接受两个参数：第一个参数是要存储的数据，第二个参数是一个键，用于标识数据。
+         * 当使用session.setAttribute()方法时，Spring框架会自动将数据存储到会话中，并使用指定的键进行标识。
+         */
         session.setAttribute(Constant.IMOOC_MALL_USER, user);
         return ApiRestResponse.success(user);
     }
 
     /**
      * 更新个性签名
+     * 由于signature来源于入参，需要增加@RequestParam注解
      */
-    @PostMapping("/user/update")
+    @PostMapping("/user/update")  // 定义URL
     @ResponseBody
     public ApiRestResponse updateUserInfo(HttpSession session, @RequestParam String signature) throws ImoocMallException {
+        // session.getAttribute()查找与键关联的数据，并将其作为方法返回值返回
         User currentUser = (User)session.getAttribute(Constant.IMOOC_MALL_USER);
         // 没有找到用户登录信息
         if (currentUser == null) {
             return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_LOGIN);
         }
-        User user = new User();
-        user.setId(currentUser.getId());   // ? 不太懂
-        user.setPersonalizedSignature(signature);
-        userService.updateInformation(user);
+        User user = new User();  //新建用户对象
+        user.setId(currentUser.getId());   // 设置id
+        user.setPersonalizedSignature(signature); // 设置个性签名
+        userService.updateInformation(user);  //需要UserServiceImpl中新增updateInformation方法
         return ApiRestResponse.success();
     }
 
@@ -101,6 +108,7 @@ public class UserController {
     @PostMapping("/user/logout")
     @ResponseBody
     public ApiRestResponse logout(HttpSession session){
+        // session.removeAttribute()方法用于从会话中删除数据。会话是Web应用程序中存储用户数据的对象，通常用于保持用户状态和数据在多个请求之间。
         session.removeAttribute(Constant.IMOOC_MALL_USER);
         return ApiRestResponse.success();
     }
@@ -124,7 +132,7 @@ public class UserController {
             return ApiRestResponse.error(ImoocMallExceptionEnum.PASSWORD_TOO_SHORT);
         }
         User user = userService.login(userName,password);
-        // 校验是否为管理员
+        // 校验是否为管理员,UserServiceimpl增加checkAdminRole()方法
         if (userService.checkAdminRole(user)) {
             // 是管理员，执行操作
             // 保存用户信息，不保存密码

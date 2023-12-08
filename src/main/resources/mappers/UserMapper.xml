@@ -121,6 +121,7 @@
     from imooc_mall_user
     where username = #{userName,jdbcType=VARCHAR}
   </select>
+  <!--parameterType="map" 表示参数不止是一个-->
   <select id="selectLogin" parameterType="map" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List"/>

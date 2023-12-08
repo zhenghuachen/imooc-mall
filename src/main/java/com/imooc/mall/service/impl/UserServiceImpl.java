@@ -55,12 +55,12 @@ public class UserServiceImpl implements UserService {
     public User login(String userName, String password) throws ImoocMallException {
         String md5Password = null;
         try {
-            md5Password = MD5Utils.getMD5Str(password);
+            md5Password = MD5Utils.getMD5Str(password);   //获取数据库中存储的md5password,返回的是String
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        User user = userMapper.selectLogin(userName, md5Password);
-        if (user == null) {
+        User user = userMapper.selectLogin(userName, md5Password);  //Mapper中新增查找密码的方法
+        if (user == null) {  // user对象为空，说明用户名活密码错误查询不到
             throw  new ImoocMallException(ImoocMallExceptionEnum.WRONG_PASSWORD);
         }
         return user;
@@ -70,14 +70,14 @@ public class UserServiceImpl implements UserService {
     public void updateInformation(User user) throws ImoocMallException {
         // 更新个性签名
         int updateCount =  userMapper.updateByPrimaryKeySelective(user);
-        if (updateCount>1) {
+        if (updateCount>1) {  //只更新一条数据，不可大于1
             throw new ImoocMallException(ImoocMallExceptionEnum.UPDATE_FAILED);
         }
     }
 
     @Override
     public boolean checkAdminRole(User user) {
-        // 1.普通用户，2.管理员
+        // 1是普通用户，2是管理员
         return user.getRole().equals(2);
     }
 }

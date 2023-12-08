@@ -20,6 +20,6 @@ public interface UserMapper {
 
     User selectByName(String userName);
 
-    // 多个参数需要使用Param注解
+    // 多个参数需要使用@Param注解
     User selectLogin(@Param("userName") String userName, @Param("password") String password);
 }
