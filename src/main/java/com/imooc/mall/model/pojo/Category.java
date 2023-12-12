@@ -1,6 +1,7 @@
 package com.imooc.mall.model.pojo;
 
 import java.util.Date;
+//POJO（Plain Old Java Object）是一种简单的Java对象，它没有继承自任何类，只是包含一些属性和方法。POJO对象通常用于表示数据库中的数据，因为它们可以轻松地映射到数据库表的行。
 
 public class Category {
     private Integer id;
