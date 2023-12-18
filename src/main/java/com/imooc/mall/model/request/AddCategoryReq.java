@@ -1,7 +1,7 @@
 package com.imooc.mall.model.request;
 
 /**
- * 描述： AddCategoryReq
+ * 描述： AddCategoryReq 请求类
  */
 public class AddCategoryReq {
     private String name;

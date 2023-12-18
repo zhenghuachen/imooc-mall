@@ -16,12 +16,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class CategoryServiceImpl implements CategoryService {
     @Autowired
-    CategoryMapper categoryMapper;
+    CategoryMapper categoryMapper; //引入mapper,并再Mapper中增加查询重名的方法
     @Override
     public  void add(AddCategoryReq addCategoryReq) throws ImoocMallException {
         Category category = new Category();
         // BeanUtils.copyProperties()方法接收两个参数：第一个参数是要被复制属性的对象，第二个参数是要将属性值复制到的对象。
-        // 该方法将遍历第一个对象的属性，并将其值复制到第二个对象的相应属性(字段类型和字段名相同)中。
+        // 该方法将遍历第一个对象的属性，并将其值复制到第二个对象的相应属性(字段类型和字段名相同的属性)中。
         BeanUtils.copyProperties(addCategoryReq, category);
         Category categoryOld = categoryMapper.selectByName(addCategoryReq.getName());  //存储表中是否有对应数据
         if (categoryOld != null) {  // 不允许重名

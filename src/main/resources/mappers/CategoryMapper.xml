@@ -114,6 +114,15 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <!--
+  MyBatis的Select语句，具体解释如下：
+  id属性为selectByName，表示这个SQL语句的唯一标识符。
+  parameterType属性为java.lang.String，表示这个SQL语句的输入参数类型为 Java 字符串类型。
+  resultMap属性为BaseResultMap，表示这个SQL语句的查询结果将会映射到BaseResultMap中。
+  include元素表示引用了另一个SQL语句的结果，这里引用了Base_Column_List，表示查询的结果包括imooc_mall_category表中所有的列。
+  where 子句表示查询条件，这里是根据name列的值进行查询，#{name, jdbcType=VARCHAR}表示使用MyBatis的占位符语法，jdbcType=VARCHAR表示name列的数据类型为VARCHAR。
+  综上所述，这个SQL语句的作用是根据imooc_mall_category表中的name列的值查询出对应的记录，并将所有列的值映射到 BaseResultMap 中。
+  -->
   <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"/>
     from imooc_mall_category

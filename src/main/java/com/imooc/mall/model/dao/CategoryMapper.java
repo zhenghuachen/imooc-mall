@@ -16,6 +16,6 @@ public interface CategoryMapper {
     int updateByPrimaryKeySelective(Category record);
 
     int updateByPrimaryKey(Category record);
-    // 通过名字查询，返回category实体
+    // 通过名字查询Cataory，返回category实体
     Category selectByName(String name);
 }

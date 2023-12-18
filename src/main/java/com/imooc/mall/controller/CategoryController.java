@@ -18,11 +18,12 @@ import javax.servlet.http.HttpSession;
 /**
  * 描述： 目录Controller
  */
+// @Controller注解，用于标识一个类或接口作为一个控制器。
 @Controller
 public class CategoryController {
 
     @Autowired
-    UserService userService;
+    UserService userService;  // 包含检验管理员的方法
     @Autowired
     CategoryService categoryService;
 
@@ -32,14 +33,18 @@ public class CategoryController {
      * @param addCategoryReq 封装参数,统一传入
      * @return
      */
-    @PostMapping("admin/category/add")   // 定义URL
+    @PostMapping("admin/category/add")   // 定义添加分类URL
     @ResponseBody
+    // HttpSession将用来校验用户是否登录，以及是否有管理员权限；
+    // @RequestBody注解表示将 HTTP 请求体中的数据绑定到方法的参数上。具体来说，当一个HTTP请求到达服务
+    // 器时，服务器会将请求体中的数据读取出来，并将其转换为方法参数所需要的类型(通常为Java对象)，然后将
+    // 其传递给方法进行处理。
     public ApiRestResponse addCategory(HttpSession session,@RequestBody AddCategoryReq addCategoryReq){
         // 入参校验
         if (addCategoryReq.getName() == null || addCategoryReq.getType() == null || addCategoryReq.getParentId() == null || addCategoryReq.getOrderNum() == null) {
             return ApiRestResponse.error(ImoocMallExceptionEnum.PARA_NOT_NULL);
         }
-        // 获取当前用户，并转成User对象
+        // 通过Session获取当前用户，并转成User对象
         User currentUser = (User) session.getAttribute(Constant.IMOOC_MALL_USER);
         if (currentUser == null) {   // 当前对象为空，说明没登录
             return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_LOGIN);
