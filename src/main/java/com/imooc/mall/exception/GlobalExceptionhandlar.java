@@ -3,9 +3,16 @@ package com.imooc.mall.exception;
 import com.imooc.mall.common.ApiRestResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.properties.bind.BindResult;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 描述： 处理统一异常的handlar
@@ -32,6 +39,44 @@ public class GlobalExceptionhandlar {
     public Object handlarImoocMallException(ImoocMallException e) {
         log.error("ImoocMallException:", e);
         return ApiRestResponse.error(e.getCode(),e.getMessage());
+    }
+
+    /**
+     * MethodArgumentNotValidException是Spring框架中javax.validation包下的一个异常类。
+     * 当使用@Valid注解对方法参数进行验证时，如果某个参数的值不符合预期，Spring会抛出MethodArgumentNotValidException异常。
+     * 这个异常通常包含一个ConstraintViolation对象，其中包含了具体的错误信息。
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseBody   // 返回Json
+    public ApiRestResponse handlerMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.error("MethodArgumentNotValidException:", e);
+        /**
+         * getBindingResult()是Spring框架中javax.validation包下的BindingResult对象的一个方法，
+         * 它用于获取在验证过程中收集的验证结果。
+         * BindingResult对象包含了所有被验证的参数的验证结果，以及所有验证错误的详细信息。通过调用getBindingResult()方法，
+         * 我们可以获取到BindingResult对象，并从中获取验证结果和错误信息。
+         */
+        return handleBindingResult(e.getBindingResult());
+    }
+
+    private ApiRestResponse handleBindingResult(BindingResult result) {
+        // 将异常处理为对外暴露的提示
+        List<String> list = new ArrayList<>();
+        if (result.hasErrors()) {   // result.hasErrors() 输入.if，选择快捷键自动生成if判断语句
+            List<ObjectError> allErrors =  result.getAllErrors();
+            // 输入itli,会自动弹出快捷选项，自动生成遍历代码for (int i = 0; i < allErrors.size(); i++) { }
+            // 选中for，鼠标悬停可选择enhance... 使用增强for循环
+            for (ObjectError objectError : allErrors) {
+                String message = objectError.getDefaultMessage();
+                list.add(message);
+            }
+        }
+        if (list.size() == 0) {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.REQUEST_PARAM_ERROR);
+        }
+        return ApiRestResponse.error(ImoocMallExceptionEnum.REQUEST_PARAM_ERROR.getCode(), list.toString());
     }
 
 }

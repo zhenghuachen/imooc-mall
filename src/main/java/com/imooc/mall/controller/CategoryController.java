@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 /**
  * 描述： 目录Controller
@@ -39,11 +40,12 @@ public class CategoryController {
     // @RequestBody注解表示将 HTTP 请求体中的数据绑定到方法的参数上。具体来说，当一个HTTP请求到达服务
     // 器时，服务器会将请求体中的数据读取出来，并将其转换为方法参数所需要的类型(通常为Java对象)，然后将
     // 其传递给方法进行处理。
-    public ApiRestResponse addCategory(HttpSession session,@RequestBody AddCategoryReq addCategoryReq){
+    // @Valid是用于数据验证的注解。当对某个字段进行数据验证时，如果该字段不符合预期，@Valid注解会抛出一个异常，从而触发后续的逻辑。
+    public ApiRestResponse addCategory(HttpSession session,@Valid  @RequestBody AddCategoryReq addCategoryReq){
         // 入参校验
-        if (addCategoryReq.getName() == null || addCategoryReq.getType() == null || addCategoryReq.getParentId() == null || addCategoryReq.getOrderNum() == null) {
-            return ApiRestResponse.error(ImoocMallExceptionEnum.PARA_NOT_NULL);
-        }
+//        if (addCategoryReq.getName() == null || addCategoryReq.getType() == null || addCategoryReq.getParentId() == null || addCategoryReq.getOrderNum() == null) {
+//            return ApiRestResponse.error(ImoocMallExceptionEnum.PARA_NOT_NULL);
+//        }
         // 通过Session获取当前用户，并转成User对象
         User currentUser = (User) session.getAttribute(Constant.IMOOC_MALL_USER);
         if (currentUser == null) {   // 当前对象为空，说明没登录
