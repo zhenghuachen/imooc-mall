@@ -7,6 +7,7 @@ import com.imooc.mall.model.pojo.User;
 import com.imooc.mall.model.request.AddCategoryReq;
 import com.imooc.mall.service.CategoryService;
 import com.imooc.mall.service.UserService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,11 +30,12 @@ public class CategoryController {
     CategoryService categoryService;
 
     /**
-     * 添加分类（后台）
+     * 后台添加目录
      * @param session  对用户进行校验,是否登录，以及是不是管理员
      * @param addCategoryReq 封装参数,统一传入
      * @return
      */
+    @ApiOperation("后台添加目录")
     @PostMapping("admin/category/add")   // 定义添加分类URL
     @ResponseBody
     // HttpSession将用来校验用户是否登录，以及是否有管理员权限；
