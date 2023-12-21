@@ -34,6 +34,7 @@ public class GlobalExceptionhandlar {
         return ApiRestResponse.error(ImoocMallExceptionEnum.SYSTEM_ERROR);
     }
 
+    // 自定义异常
     @ExceptionHandler(ImoocMallException.class)
     @ResponseBody   // 返回Json
     public Object handlarImoocMallException(ImoocMallException e) {
@@ -42,9 +43,14 @@ public class GlobalExceptionhandlar {
     }
 
     /**
+     * 参数检验异常
      * MethodArgumentNotValidException是Spring框架中javax.validation包下的一个异常类。
      * 当使用@Valid注解对方法参数进行验证时，如果某个参数的值不符合预期，Spring会抛出MethodArgumentNotValidException异常。
      * 这个异常通常包含一个ConstraintViolation对象，其中包含了具体的错误信息。
+     * @ExceptionHandler注解用于处理异常。当Spring Boot应用程序抛出异常时，这个注解会自动捕获异常并处理它。
+     * 注解可以应用于类级别或方法级别。
+     * 当应用于类级别时，它表示该类中的所有方法都会处理指定的异常类型。
+     * 当应用于方法级别时，它只表示该方法会处理指定的异常类型。
      * @param e
      * @return
      */
@@ -61,6 +67,7 @@ public class GlobalExceptionhandlar {
         return handleBindingResult(e.getBindingResult());
     }
 
+    // 当验证过程中出现错误时，这个方法会根据BindingResult对象中的错误信息构建一个ApiRestResponse对象，并返回这个对象。
     private ApiRestResponse handleBindingResult(BindingResult result) {
         // 将异常处理为对外暴露的提示
         List<String> list = new ArrayList<>();

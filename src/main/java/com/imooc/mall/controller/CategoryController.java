@@ -35,6 +35,8 @@ public class CategoryController {
      * @param addCategoryReq 封装参数,统一传入
      * @return
      */
+    // ApiOperation是一个用于描述API操作的注解，它可以包含操作的描述、输入参数、输出参数等信息。在这个示例中，
+    // 我们定义了一个ApiOperation注解，用于描述一个名为“后台添加目录”的操作。
     @ApiOperation("后台添加目录")
     @PostMapping("admin/category/add")   // 定义添加分类URL
     @ResponseBody
