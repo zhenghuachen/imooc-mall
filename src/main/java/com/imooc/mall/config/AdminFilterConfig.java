@@ -1,4 +1,4 @@
-package com.imooc.mall.common;
+package com.imooc.mall.config;
 
 import com.imooc.mall.filter.AdminFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
