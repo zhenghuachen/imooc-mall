@@ -22,4 +22,7 @@ public interface CategoryMapper {
     Category selectByName(String name);
 
     List<Category> selectList();
+
+    // 通过parentid 查询分类列表
+    List<Category> selectCategoriesByParentId(Integer parentId);
 }

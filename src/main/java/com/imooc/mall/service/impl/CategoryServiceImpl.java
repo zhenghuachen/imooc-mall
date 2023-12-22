@@ -7,12 +7,15 @@ import com.imooc.mall.exception.ImoocMallExceptionEnum;
 import com.imooc.mall.model.dao.CategoryMapper;
 import com.imooc.mall.model.pojo.Category;
 import com.imooc.mall.model.request.AddCategoryReq;
+import com.imooc.mall.model.vo.CategoryVO;
 import com.imooc.mall.service.CategoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -82,5 +85,39 @@ public class CategoryServiceImpl implements CategoryService {
         List<Category> categoryList = categoryMapper.selectList();// 返回category的列表
         PageInfo pageInfo = new PageInfo(categoryList);//查询结果categoryList封装为PageInfo对象的方法
         return  pageInfo;
+    }
+
+    @Override
+    // 返回CategoryVO 列表
+    public List<CategoryVO> listCategoryForCustomer() {
+        ArrayList<CategoryVO> categoryVOList = new ArrayList<>();
+        // 额外的数据处理，通过新写的方法解决
+        recursivelyFindCategories(categoryVOList, 0);  //一级目录父目录为0
+        return categoryVOList;
+    }
+    private void recursivelyFindCategories(List<CategoryVO> categoryVOList, Integer parentId) {
+        // 递归获取所有子类别，并组合成为一个"目录树"
+        // 递归停止条件：到达最后一层(无子目录),查找的categoryList为空,会跳过if判断，当前递归结束
+        List<Category> categoryList = categoryMapper.selectCategoriesByParentId(parentId);
+        /**
+         * CollectionUtils.isEmpty()是Apache Commons Lang库中的一个方法，用于检查一个集合是否为空。
+         * CollectionUtils.isEmpty()方法接收一个参数，即需要检查的集合对象。它返回一个布尔值，表示集合是否为空。
+         * 在Java中，我们可以使用Collection接口及其实现类（如List、Set、Map等）来表示集合。如果一个集合
+         * 没有任何元素，那么它就被视为空集合。
+         */
+        if (!CollectionUtils.isEmpty(categoryList)) {   //ifn 会自动生成if Null判断
+            for (int i = 0; i < categoryList.size(); i++) {
+                Category category = categoryList.get(i);
+                CategoryVO categoryVO = new CategoryVO();
+                /**
+                 * BeanUtils.copyProperties()方法接收两个参数，分别是源对象和目标对象。
+                 * 它将源对象的属性值复制到目标对象中，覆盖目标对象中已存在的属性值。
+                 */
+                BeanUtils.copyProperties(category, categoryVO);
+                categoryVOList.add(categoryVO);   // 完成最外层categoryVO
+                // 递归获取子目录:传入当前categoryVO的childCategory,以及当前categoryVO的ID作为parenId
+                recursivelyFindCategories(categoryVO.getChildCategory(), categoryVO.getId());
+            }
+        }
     }
 }
