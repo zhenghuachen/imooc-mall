@@ -74,6 +74,18 @@
 			<artifactId>pagehelper-spring-boot-starter</artifactId>
 			<version>1.2.13</version>
 		</dependency>
+
+		<!-- Spring Boot提供的Redis模块，用于在Spring Boot应用中集成Redis数据库。-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+		<!-- Spring Boot提供的缓存模块，用于在Spring Boot应用中集成缓存技术。-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>

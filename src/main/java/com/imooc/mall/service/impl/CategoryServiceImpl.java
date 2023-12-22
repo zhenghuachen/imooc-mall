@@ -11,6 +11,7 @@ import com.imooc.mall.model.vo.CategoryVO;
 import com.imooc.mall.service.CategoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -88,6 +89,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Cacheable(value = "listCategoryForCustomer")
+    // @Cacheable注解，用于实现缓存，标记一个方法的结果应该被缓存
     // 返回CategoryVO 列表
     public List<CategoryVO> listCategoryForCustomer() {
         ArrayList<CategoryVO> categoryVOList = new ArrayList<>();
