@@ -14,9 +14,11 @@ public enum ImoocMallExceptionEnum {
     UPDATE_FAILED(10008, "更新失败"),
     NEED_ADMIN(10009, "无管理员权限"),
     PARA_NOT_NULL(10010, "参数不能为空"),
-    CREATE_FAILED(10011, "参数不能为空"),
+    CREATE_FAILED(10011, "新增失败"),
     REQUEST_PARAM_ERROR(10012, "参数错误"),
     DELETE_FAILED(10013, "删除失败"),
+    MKDIR_FAILED(10014, "文件夹创建失败"),
+    UPLOAD_FAILED(10015, "图片上传失败"),
     SYSTEM_ERROR(20000, "系统异常");
     /**
      * 异常码
