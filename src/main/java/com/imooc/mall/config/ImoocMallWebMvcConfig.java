@@ -32,6 +32,16 @@ public class ImoocMallWebMvcConfig implements WebMvcConfigurer {
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        /**
+         * 使用Spring框架创建一个资源处理器。资源处理器用于处理请求中的URL，并将请求转发到相应的资源位置。
+         * 首先使用registry.addResourceHandler()方法创建一个资源处理器，并将请求的URL路径设置为
+         * /images/**，表示处理所有以/images/开头的请求。
+         * 然后，使用addResourceLocations()方法将请求转发到指定的资源位置。资源位置设置为file:加上常量
+         * Constant.FILE_UPLOAD_DIR，表示请求将被转发到指定的文件上传目录。
+         * 最后，registry.addResourceHandler()将创建的资源处理器注册到Spring容器中，以便处理请求时使用。
+         * 需要注意的是，这个例子中的资源处理器只处理以/images/开头的请求，并将请求转发到指定的文件上传目录。
+         * 如果需要处理其他类型的请求或资源，需要使用相应的URL路径和资源位置进行配置。
+         */
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("file:" + Constant.FILE_UPLOAD_DIR);
         registry.addResourceHandler("swagger-ui.html").addResourceLocations(

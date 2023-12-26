@@ -21,6 +21,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void add(AddProductReq addProductReq) {
         Product product = new Product();
+        // 用于将一个对象的所有属性值复制到另一个对象
         BeanUtils.copyProperties(addProductReq, product);
         // 检测重名情况
         Product productOld = productMapper.selectByName(addProductReq.getName());

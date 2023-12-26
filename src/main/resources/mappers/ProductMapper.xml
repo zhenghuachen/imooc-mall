@@ -149,6 +149,7 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <!--通过名字查询商品-->
   <select id="selectByName" parameterType="java.lang.String"
   resultMap="BaseResultMap">
     select <include refid="Base_Column_List"/>
