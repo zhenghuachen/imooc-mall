@@ -1,5 +1,7 @@
 package com.imooc.mall.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.imooc.mall.exception.ImoocMallException;
 import com.imooc.mall.exception.ImoocMallExceptionEnum;
 import com.imooc.mall.model.dao.ProductMapper;
@@ -9,7 +11,8 @@ import com.imooc.mall.service.ProductService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 /**
  * 描述： 商品服务实现类
@@ -66,5 +69,23 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void batchUpdateSellStatus(Integer[] ids, Integer sellStatus) {
         productMapper.batchUpdateSellStatus(ids, sellStatus);
+    }
+
+    @Override
+    public PageInfo listForAdmin(Integer pageNum, Integer pageSize) {
+        /**
+         * PageHelper分页查询商品列表
+         * PageHelper.startPage(pageNum, pageSize);
+         * 表示开始分页查询，其中pageNum表示当前页码，pageSize表示每页显示的记录数。
+         * List<Product> products = productMapper.selectListForAdmin();
+         * 表示将查询结果存储到products列表中。
+         * PageInfo pageInfo = new PageInfo(products);
+         * 表示创建一个PageInfo对象，将products列表作为参数传递，表示当前页的商品信息。
+         * 将查询结果封装为PageInfo对象返回。
+         */
+        PageHelper.startPage(pageNum, pageSize);
+        List<Product> products = productMapper.selectListForAdmin();
+        PageInfo pageInfo = new PageInfo(products);
+        return pageInfo;
     }
 }

@@ -23,4 +23,6 @@ public interface ProductService {
     void  delete(Integer id);
 
     void batchUpdateSellStatus(@RequestParam Integer[] ids, @RequestParam Integer sellStatus);
+
+    PageInfo listForAdmin(Integer pageNum, Integer pageSize);
 }
