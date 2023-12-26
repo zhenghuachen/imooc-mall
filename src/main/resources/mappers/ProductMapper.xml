@@ -156,4 +156,24 @@
     from imooc_mall_product
     where name = #{name, jdbcType = VARCHAR}
   </select>
+  <!--批量更新商品的状态
+    MyBatis的动态SQL语句，用于批量更新商品的状态。
+    id="batchUpdateSellStatus"表示这个SELECT语句的ID为"batchUpdateSellStatus"。
+    update imooc_mall_product表示要更新的表名。
+    set status=#{sellStatus}表示要更新的字段名和值。
+    where id in表示条件语句，用于指定要更新的记录的ID。
+    <foreach>标签用于循环遍历传入的ID列表，并为每个ID生成一个IN条件。
+    close=")" item="id" open="(" separator=",">表示<foreach>标签的属性，
+    其中close=")"表示结束标签的右括号，item="id"表示遍历的每个元素的属性名，
+    open="("表示开始标签的左括号，separator=","表示分隔符，用于分隔每个ID。
+    #{id}表示要插入的ID值。
+  -->
+  <update id="batchUpdateSellStatus">
+    update imooc_mall_product
+    set status=#{sellStatus}
+    where id in
+    <foreach collection="ids" close=")" item="id" open="(" separator=",">
+      #{id}
+    </foreach>
+  </update>
 </mapper>

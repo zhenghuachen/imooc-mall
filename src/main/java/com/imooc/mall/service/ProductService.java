@@ -21,4 +21,6 @@ public interface ProductService {
     void  update(Product updateProduct);
 
     void  delete(Integer id);
+
+    void batchUpdateSellStatus(@RequestParam Integer[] ids, @RequestParam Integer sellStatus);
 }

@@ -9,6 +9,7 @@ import com.imooc.mall.service.ProductService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 描述： 商品服务实现类
@@ -60,5 +61,10 @@ public class ProductServiceImpl implements ProductService {
         if (count == 0) {
             throw new ImoocMallException(ImoocMallExceptionEnum.DELETE_FAILED);
         }
+    }
+
+    @Override
+    public void batchUpdateSellStatus(Integer[] ids, Integer sellStatus) {
+        productMapper.batchUpdateSellStatus(ids, sellStatus);
     }
 }
