@@ -6,6 +6,7 @@ import com.imooc.mall.model.pojo.Category;
 import com.imooc.mall.model.pojo.Product;
 import com.imooc.mall.model.request.AddCategoryReq;
 import com.imooc.mall.model.request.AddProductReq;
+import com.imooc.mall.model.request.ProductListReq;
 import com.imooc.mall.model.vo.CategoryVO;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -25,4 +26,8 @@ public interface ProductService {
     void batchUpdateSellStatus(@RequestParam Integer[] ids, @RequestParam Integer sellStatus);
 
     PageInfo listForAdmin(Integer pageNum, Integer pageSize);
+
+    Product datail(Integer id);
+
+    PageInfo list(ProductListReq productListReq);
 }

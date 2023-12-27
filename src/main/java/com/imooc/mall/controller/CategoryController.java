@@ -132,7 +132,7 @@ public class CategoryController {
     @ResponseBody
     // pageNum表示当前页码，pageSize表示每页显示的记录数
     public ApiRestResponse listCategoryForCustomer() {
-        List<CategoryVO> categoryVOS = categoryService.listCategoryForCustomer();
+        List<CategoryVO> categoryVOS = categoryService.listCategoryForCustomer(0);
         return ApiRestResponse.success(categoryVOS);
     }
 }

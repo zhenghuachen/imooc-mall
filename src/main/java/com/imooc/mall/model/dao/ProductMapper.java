@@ -1,6 +1,7 @@
 package com.imooc.mall.model.dao;
 
 import com.imooc.mall.model.pojo.Product;
+import com.imooc.mall.model.query.ProductlistQuery;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,4 +29,7 @@ public interface ProductMapper {
     int batchUpdateSellStatus(@Param("ids") Integer[] ids, @Param("sellStatus") Integer sellStatus);
 
     List<Product> selectListForAdmin();
+
+    // 前台查找数据库
+    List<Product> selectList(@Param("query") ProductlistQuery query);
 }

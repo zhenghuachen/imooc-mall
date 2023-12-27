@@ -1,7 +1,10 @@
 package com.imooc.mall.common;
 
+import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
 
 /**
  * 常量值
@@ -28,4 +31,8 @@ public class Constant {
         FILE_UPLOAD_DIR = fileUploadDir;
     }
 
+    // 支持的排序字段
+    public interface ProductListOrderBy{
+        Set<String> PRICE_ASC_DESC = Sets.newHashSet("price desc", "price asc");
+    }
 }

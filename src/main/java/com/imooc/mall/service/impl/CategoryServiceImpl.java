@@ -92,10 +92,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Cacheable(value = "listCategoryForCustomer")
     // @Cacheable注解，用于实现缓存，标记一个方法的结果应该被缓存
     // 返回CategoryVO 列表
-    public List<CategoryVO> listCategoryForCustomer() {
+    public List<CategoryVO> listCategoryForCustomer(Integer parentId) {
         ArrayList<CategoryVO> categoryVOList = new ArrayList<>();
         // 额外的数据处理，通过新写的方法解决
-        recursivelyFindCategories(categoryVOList, 0);  //一级目录父目录为0
+        recursivelyFindCategories(categoryVOList, parentId);  //一级目录父目录为0
         return categoryVOList;
     }
     private void recursivelyFindCategories(List<CategoryVO> categoryVOList, Integer parentId) {
