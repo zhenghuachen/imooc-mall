@@ -109,14 +109,23 @@ public class ProductServiceImpl implements ProductService {
     public PageInfo list(ProductListReq productListReq) {
         // 构建query对象
         ProductlistQuery productlistQuery = new ProductlistQuery();
-        //搜索处理
+        // 搜索处理
+        /**
+         * StringUtils是Apache Commons Lang库中的一个类，提供了许多字符串
+         * 处理的方法，如检查字符串是否为空、转换字符串大小写、格式化日期等。
+         * StringUtils.isEmpty()用于检查一个字符串是否为空字符串(即长度为0)。
+         * StringBuilder()是Java中String类的构造方法之一，用于创建一个可修改
+         * 的字符串对象。
+         * StringBuilder对象的主要优点是它是一个可修改的字符串对象，可以在运行
+         * 时动态地添加或删除字符。
+         */
         if (!StringUtils.isEmpty(productListReq.getKeyword())) {
             // keyword左右各添加一个%号
             String keyword = new StringBuilder().append("%").append(productListReq.getKeyword()).append("%").toString();
             productlistQuery.setKeyword(keyword);
         }
         // 目录处理：如果查某个目录下的商品，不仅是需要查出该目录下的，还要把所有子目录的所有商品都查出来，所以要拿到一个目录id的List；
-        if (productListReq.getCategoryId() != null) {  // 传了categoryId
+        if (productListReq.getCategoryId() != null) {// 传了categoryId
             // 拿到以productListReq.getCategoryId()为根节点，所有目录VO的List
             List<CategoryVO> categoryVOList = categoryService.listCategoryForCustomer(productListReq.getCategoryId());
             ArrayList<Integer> categoryIds = new ArrayList<>();
@@ -125,6 +134,7 @@ public class ProductServiceImpl implements ProductService {
             productlistQuery.setCategoryIds(categoryIds);
         }
         // 排序处理, 枚举限制前端传的字段符合要求
+        // 获取排序字段
         String orderBy = productListReq.getOrderBy();
         if (Constant.ProductListOrderBy.PRICE_ASC_DESC.contains(orderBy)) {
             PageHelper.startPage(productListReq.getPageNum(), productListReq.getPageSize(), orderBy);
@@ -135,12 +145,13 @@ public class ProductServiceImpl implements ProductService {
         PageInfo pageInfo = new PageInfo(productList);
         return  pageInfo;
     }
-    // 获取所有目录Id（包括子目录），平铺于数组中
+    // 获取所有目录Id（包括子目录），平铺于列表中
     private void getCategoryIds(List<CategoryVO> categoryVOList, ArrayList<Integer> categoryIds) {
         for (int i = 0; i < categoryVOList.size(); i++) {
             CategoryVO categoryVO = categoryVOList.get(i);
             if (categoryVO != null) {  // 自身含有Id
                 categoryIds.add(categoryVO.getId());
+                // 递归
                 getCategoryIds(categoryVO.getChildCategory(), categoryIds);
             }
         }

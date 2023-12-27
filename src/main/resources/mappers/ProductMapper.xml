@@ -183,6 +183,21 @@
     from imooc_mall_product
     order by update_time desc
   </select>
+  <!--
+    用于查询商品列表。
+    id属性用于标识该语句，resultMap属性用于指定结果映射，parameterType属性用于指定参数类型。
+    select表示查询的列，这里使用了<include>标签引入了一个公共列列表，列名包括id、name、price、pic等。
+    from imooc_mall_product表示查询的表名。
+    <where>表示查询条件，这里使用了<if>标签来判断是否有查询条件，如果有，则使用and关键字连接各个条件。
+    <if test="query.keyword != null">表示判断query.keyword是否不为空，如果不为空，则表示需要查询关键字。
+    and name like #{query.keyword}表示在商品名称中模糊查询关键字。
+    <if test="query.categoryIds != null">表示判断query.categoryIds是否不为空，如果不为空，则表示需要按照分类查询。
+    and category_id in表示按照分类ID进行查询。
+    <foreach collection="query.categoryIds" close=")" item="item" open="(" separator=",">表示使用<foreach>标签遍历分类ID数组，并为每个ID生成一个条件。
+    #{item}表示当前遍历的ID。
+    and status = 1表示查询状态为1（即上架）的商品。
+    order by update_time desc表示按照更新时间降序排序。
+  -->
   <select id="selectList"  resultMap="BaseResultMap" parameterType="com.imooc.mall.model.query.ProductlistQuery">
     select
     <include refid="Base_Column_List"/>

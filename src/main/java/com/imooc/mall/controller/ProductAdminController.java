@@ -47,6 +47,7 @@ public class ProductAdminController {
         return  ApiRestResponse.success();
     }
 
+    // 为了在图片地址中保存URL，传入HttpServletRequest
     @PostMapping("admin/upload/file")
     public ApiRestResponse upload(HttpServletRequest httpServletRequest, @RequestParam("file") MultipartFile file) {
         // 获取上传文件原始名称
@@ -59,9 +60,9 @@ public class ProductAdminController {
          * 通常用于区分文件类型。因此，在处理文件上传请求时，通常需要将文件扩展名与文件名一起使
          * 用，以便正确地保存和处理文件。
          */
-        String fileName = file.getOriginalFilename();
+        String fileName = file.getOriginalFilename(); //fileName: logo.png
         // 获取图片文件格式,后缀
-        String suffixName = fileName.substring(fileName.lastIndexOf("."));
+        String suffixName = fileName.substring(fileName.lastIndexOf(".")); // suffixName: .png
         // 生成文件名称UUID
         /**
          * UUID.randomUUID()是Java中java.util.UUID类的一个静态方法，用于生成一个随机的
@@ -73,11 +74,11 @@ public class ProductAdminController {
          * 其他更复杂的方法。
          */
         UUID uuid = UUID.randomUUID();
-        String newFileName = uuid.toString() + suffixName;
-        // 创建文件
+        String newFileName = uuid.toString() + suffixName; // newfileName: b93fee5a-271c-4922-b57e-99b5c3413d82.png
+        // 创建文件夹
         File fileDirectory = new File(Constant.FILE_UPLOAD_DIR);
         File destFile = new File(Constant.FILE_UPLOAD_DIR + newFileName);
-        if (!fileDirectory.exists()) {
+        if (!fileDirectory.exists()) { //文件夹不存在，则创建fileDirectory.mkdir()
             if (!fileDirectory.mkdir()) {
                 throw new ImoocMallException(ImoocMallExceptionEnum.MKDIR_FAILED);
             }
@@ -108,13 +109,14 @@ public class ProductAdminController {
          * 因为这些参数通常用于传递请求参数，而不是用于表示请求的资源。
          */
         try {
+
             return ApiRestResponse.success(getHost(new URI(httpServletRequest.getRequestURL()+""))+"/images/"+newFileName);
         } catch (URISyntaxException e) {
             return ApiRestResponse.error(ImoocMallExceptionEnum.UPLOAD_FAILED);
         }
     }
-    // 获取IP和端口号
-    private URI getHost(URI uri) {
+    // 裁剪URI，获取IP和端口号
+    private URI getHost(URI uri) {  //uri:http://127.0.0.1:8083/admin/upload/file
         URI effectiveURI;
         // 新建URI
         /**
