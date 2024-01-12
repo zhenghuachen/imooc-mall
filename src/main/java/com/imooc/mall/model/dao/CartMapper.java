@@ -25,4 +25,7 @@ public interface CartMapper {
 
     // 通过用户ID和商品ID查询Cart是否存在
     Cart selectCartByUserIdAndProductId(@Param("userId") Integer userId, @Param("productId") Integer productId);
+
+    // 修改选中状态
+    Integer selectOrNot(@Param("userId") Integer userId, @Param("productId") Integer productId, @Param("selected") Integer selected);
 }
