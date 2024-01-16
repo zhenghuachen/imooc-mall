@@ -125,7 +125,7 @@ public class OrderServiceImpl implements OrderService {
 
     private List<OrderItem> cartVOListToOrderItemList(List<CartVO> cartVOList) {
         List<OrderItem> orderItemList = new ArrayList<>();
-        for (int i = 0; i < orderItemList.size(); i++) {
+        for (int i = 0; i < cartVOList.size(); i++) {
             CartVO cartVO =  cartVOList.get(i);
             OrderItem orderItem = new OrderItem();
             orderItem.setProductId(cartVO.getProductId());
