@@ -27,8 +27,11 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public List<CartVO> list(Integer userId) {
+        // 获取指定用户的购物车列表
         List<CartVO> cartVOS = cartMapper.selectList(userId);
+        // 循环遍历购物车列表，对于每个购物车商品，计算其总价并设置到CartVO对象中
         for (int i = 0; i < cartVOS.size(); i++){
+            // cartVOS.get(i)获取当前购物车商品的CartVO对象，并计算总价并设置到totalPrice属性
             CartVO cartVO = cartVOS.get(i);
             cartVO.setTotalPrice(cartVO.getPrice()*cartVO.getQuantity());
         }

@@ -121,6 +121,25 @@
     where user_id = #{userId}
     and product_id = #{productId}
   </select>
+  <!--
+    selectList：为该查询语句起了一个ID，便于在其他地方引用。
+    resultType：指定了查询结果的类型为 com.imooc.mall.model.vo.CartVO，即将查询结果映射到 CartVO 类型的对象。
+    parameterType：指定了查询语句的参数类型为 java.lang.Integer，即接受一个整数类型的参数作为用户ID。
+    查询语句：通过使用 SELECT 语句从购物车表和商品表中获取所需的字段数据，并使用 LEFT JOIN 进行表连接操作。
+      c.id as id：将购物车表的 id 字段映射到 CartVO 对象的 id 属性。
+      p.id as productId：将商品表的 id 字段映射到 CartVO 对象的 productId 属性。
+      c.user_id as userId：将购物车表的 user_id 字段映射到 CartVO 对象的 userId 属性。
+      c.quantity as quantity：将购物车表的 quantity 字段映射到 CartVO 对象的 quantity 属性。
+      c.selected as selected：将购物车表的 selected 字段映射到 CartVO 对象的 selected 属性。
+      p.price as price：将商品表的 price 字段映射到 CartVO 对象的 price 属性。
+      p.name as productName：将商品表的 name 字段映射到 CartVO 对象的 productName 属性。
+      p.image as productImage：将商品表的 image 字段映射到 CartVO 对象的 productImage 属性。
+    from imooc_mall_cart c：指定查询语句的主表为购物车表，并使用别名 c。
+    left join imooc_mall_product p on p.id = c.product_id：通过左连接操作将商品表和购物车表关联起来，以便获取商品信息。使用别名 p 表示商品表，on p.id = c.product_id 表示两个表之间的关联条件。
+    where c.user_id = #{userId}：添加查询条件，限定购物车表中的用户ID等于给定的参数值 userId。
+    and p.status = 1：添加查询条件，限定商品表中的状态字段为1（表示可用）。
+    数据库左连接（left join）是一种关联查询方式，它可以返回左表中所有的记录，而右表中与左表匹配的记录。如果右表中没有匹配的记录，则返回 NULL 值。
+  -->
   <select id="selectList" resultType="com.imooc.mall.model.vo.CartVO"
           parameterType="java.lang.Integer">
     select
