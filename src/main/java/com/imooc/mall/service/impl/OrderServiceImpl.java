@@ -18,6 +18,7 @@ import com.imooc.mall.service.OrderService;
 import com.imooc.mall.util.OrderCodeFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -44,6 +45,23 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     OrderItemMapper orderItemMapper;
 
+    /**
+     * @Transactional 注解可以应用在方法或类级别上，用于声明一个方法或类需要被事务管理。
+     * 具体来说，@Transactional(rollbackFor = Exception.class) 的含义如下：
+     * @Transactional：标记该方法或类需要进行事务管理。
+     * rollbackFor = Exception.class：指定在哪些异常发生时需要回滚事务。Exception.class表示回滚
+     * 所有的异常。
+     * 使用 @Transactional 注解可以达到以下效果：
+     * 当被注解的方法或类执行期间发生了受检异常或运行时异常时，Spring会自动回滚事务，将之前的数据库操作撤销。
+     * 如果没有指定rollbackFor属性，那么默认情况下只有运行时异常会触发事务回滚。
+     * 需要注意的是，@Transactional注解需要与Spring的事务管理器配合使用，以确保事务的正确执行和回滚。
+     * 通常情况下，你需要在 Spring 配置文件中配置适当的事务管理器。
+     * @param createOrderReq
+     * @return
+     */
+
+    // 数据库事务
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public  String create(CreateOrderReq createOrderReq) {
         // 拿到用户ID
