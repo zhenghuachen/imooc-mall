@@ -297,4 +297,30 @@ public class OrderServiceImpl implements OrderService {
         return pngAddress;
     }
 
+    @Override
+    public PageInfo listForAdmin(Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Order> orderList = orderMapper.selectAllForAdmin();
+        List<OrderVO> orderVOList = orderListToOrderVOList(orderList);
+        PageInfo pageInfo = new PageInfo<>(orderList);
+        pageInfo.setList(orderVOList);
+        return pageInfo;
+    }
+
+    @Override
+    public void pay(String orderNo) {
+        Order order = orderMapper.selectByOrderNo(orderNo);
+        // 查不到订单，报错
+        if (order == null) {
+            throw new ImoocMallException(ImoocMallExceptionEnum.NO_ORDER);
+        }
+        if (order.getOrderStatus() == Constant.OrderStatusEnum.NOT_PAID.getCode()) {
+            order.setOrderStatus(Constant.OrderStatusEnum.PAID.getCode());
+            order.setEndTime(new Date());
+            orderMapper.updateByPrimaryKeySelective(order);
+        } else {
+            throw new ImoocMallException(ImoocMallExceptionEnum.WRONG_ORDER_STATUS);
+        }
+    }
+
 }

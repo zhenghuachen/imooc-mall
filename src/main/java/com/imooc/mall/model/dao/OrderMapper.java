@@ -23,4 +23,7 @@ public interface OrderMapper {
 
     List<Order> selectForCustomer(Integer userId);
 
+    // 管理员获取所有订单信息
+    List<Order> selectAllForAdmin();
+
 }

@@ -24,4 +24,8 @@ public interface OrderService {
 
     // 生成二维码，返回二维码图片地址
     String qrcode(String orderNo);
+
+    PageInfo listForAdmin(Integer pageNum, Integer pageSize);
+
+    void pay(String orderNo);
 }
