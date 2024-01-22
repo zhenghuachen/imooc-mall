@@ -21,4 +21,7 @@ public interface OrderService {
     PageInfo listForCustomer(Integer pageNum, Integer pageSize);
 
     void cancel(String orderNo);
+
+    // 生成二维码，返回二维码图片地址
+    String qrcode(String orderNo);
 }

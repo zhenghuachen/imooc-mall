@@ -2,6 +2,7 @@ package com.imooc.mall.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.zxing.WriterException;
 import com.imooc.mall.common.Constant;
 import com.imooc.mall.exception.ImoocMallException;
 import com.imooc.mall.exception.ImoocMallExceptionEnum;
@@ -20,12 +21,18 @@ import com.imooc.mall.model.vo.OrderVO;
 import com.imooc.mall.service.CartService;
 import com.imooc.mall.service.OrderService;
 import com.imooc.mall.util.OrderCodeFactory;
+import com.imooc.mall.util.QRCodeGenerator;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,6 +57,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     OrderItemMapper orderItemMapper;
+
+    @Value("${file.upload.ip}")
+    String ip;
 
     /**
      * @Transactional 注解可以应用在方法或类级别上，用于声明一个方法或类需要被事务管理。
@@ -236,7 +246,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public  void cancel (String orderNo) {
+    public  void cancel(String orderNo) {
         Order order = orderMapper.selectByOrderNo(orderNo);
         // 查不到订单，报错
         if (order == null) {
@@ -256,7 +266,35 @@ public class OrderServiceImpl implements OrderService {
         } else{
             throw new ImoocMallException(ImoocMallExceptionEnum.WRONG_ORDER_STATUS);
         }
+    }
 
+    // 生成二维码，返回二维码图片地址
+    @Override
+    public String qrcode(String orderNo) {
+        /**
+         * 首先，通过RequestContextHolder.getRequestAttributes()获取当前请求的属性。
+         * 然后，将请求对象转换为ServletRequestAttributes对象，以便获取请求相关信息。
+         * 通过ServletRequestAttributes.getRequest()获取HttpServletRequest对象，从中获取本地端口号和IP地址。
+         * 构建一个包含IP地址和本地端口号的字符串，命名为address。
+         * 根据传入的 orderNo 参数拼接出二维码的链接地址 payUrl，格式为 "http://address/pay?orderNo=xx"。
+         * 调用QRCodeGenerator.generatorQRCodeImage()方法生成二维码图片，并保存到指定路径下的文件中。
+         * 将生成的二维码图片的地址拼接为完整的URL地址，并命名为pngAddress。
+         * 返回 pngAddress，即生成的二维码图片的地址。
+         */
+        ServletRequestAttributes attributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+        String address = ip + ":" + request.getLocalPort();
+        // 生成二维码的字符串
+        String payUrl = "http://" + address + "/pay?orderNo=" + orderNo;
+        try {
+            QRCodeGenerator.generatorQRCodeImage(payUrl, 350, 350, Constant.FILE_UPLOAD_DIR + orderNo + ".png");
+        } catch (WriterException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String pngAddress = "http://" + address + "/images/" + orderNo + ".png";
+        return pngAddress;
     }
 
 }

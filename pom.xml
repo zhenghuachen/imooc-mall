@@ -86,6 +86,13 @@
 			<artifactId>spring-boot-starter-cache</artifactId>
 		</dependency>
 
+		<!-- ZXing 是一个开源的条码/二维码处理库，可以用于生成和解析各种格式的条码和二维码。javase 模块是 ZXing 库的一个子模块，提供了在 Java SE 环境中使用 ZXing 的功能。 -->
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>javase</artifactId>
+			<version>3.3.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
