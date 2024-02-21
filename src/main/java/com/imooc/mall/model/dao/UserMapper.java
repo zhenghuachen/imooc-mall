@@ -22,4 +22,6 @@ public interface UserMapper {
 
     // 多个参数需要使用@Param注解
     User selectLogin(@Param("userName") String userName, @Param("password") String password);
+
+    User selectOneByEmailAddress(String emailAddress);
 }

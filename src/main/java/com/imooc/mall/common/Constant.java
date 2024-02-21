@@ -19,6 +19,8 @@ public class Constant {
 
     // MD5 加盐
     public static final String SALT ="8svbsvjkweDF,.03[";
+    public static final String EMAIL_SUBJECT = "您的验证码";
+    public static final String EMAIL_FROM = "1003569727@qq.com";
 
     /** 此处有坑，静态变量注入是指在程序运行时，将外部数据注入到静态变量中
      *  在Java中，静态变量是类级别的变量，它们在类加载时初始化，并且只能被类对象访问。

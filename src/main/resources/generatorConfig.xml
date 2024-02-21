@@ -48,28 +48,28 @@
       <property name="enableSubPackages" value="true"/>
     </javaClientGenerator>
     <!--生成对应表及类名-->
-    <table schema="root" tableName="imooc_mall_cart" domainObjectName="Cart"
-      enableCountByExample="false"
-      enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-      selectByExampleQueryId="false">
-    </table>
-    <table tableName="imooc_mall_category" domainObjectName="Category" enableCountByExample="false"
-      enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-      selectByExampleQueryId="false">
-    </table>
-    <table tableName="imooc_mall_order" domainObjectName="Order" enableCountByExample="false"
-      enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-      selectByExampleQueryId="false">
-    </table>
-    <table tableName="imooc_mall_order_item" domainObjectName="OrderItem"
-      enableCountByExample="false"
-      enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-      selectByExampleQueryId="false">
-    </table>
-    <table tableName="imooc_mall_product" domainObjectName="Product" enableCountByExample="false"
-      enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-      selectByExampleQueryId="false">
-    </table>
+<!--    <table schema="root" tableName="imooc_mall_cart" domainObjectName="Cart"-->
+<!--      enableCountByExample="false"-->
+<!--      enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
+<!--      selectByExampleQueryId="false">-->
+<!--    </table>-->
+<!--    <table tableName="imooc_mall_category" domainObjectName="Category" enableCountByExample="false"-->
+<!--      enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
+<!--      selectByExampleQueryId="false">-->
+<!--    </table>-->
+<!--    <table tableName="imooc_mall_order" domainObjectName="Order" enableCountByExample="false"-->
+<!--      enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
+<!--      selectByExampleQueryId="false">-->
+<!--    </table>-->
+<!--    <table tableName="imooc_mall_order_item" domainObjectName="OrderItem"-->
+<!--      enableCountByExample="false"-->
+<!--      enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
+<!--      selectByExampleQueryId="false">-->
+<!--    </table>-->
+<!--    <table tableName="imooc_mall_product" domainObjectName="Product" enableCountByExample="false"-->
+<!--      enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
+<!--      selectByExampleQueryId="false">-->
+<!--    </table>-->
     <table tableName="imooc_mall_user" domainObjectName="User" enableCountByExample="false"
       enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
       selectByExampleQueryId="false">

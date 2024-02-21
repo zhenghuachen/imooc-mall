@@ -15,4 +15,6 @@ public interface UserService {
     void updateInformation(User user) throws ImoocMallException;
 
     boolean checkAdminRole(User user);
+
+    boolean checkEmailRegistered(String emailAddress);
 }
