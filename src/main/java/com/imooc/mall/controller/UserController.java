@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpSession;
+import javax.validation.constraints.Email;
 
 /**
  * 用户控制器
@@ -164,9 +165,17 @@ public class UserController {
             if (!emailPassed) {
                 return ApiRestResponse.error(ImoocMallExceptionEnum.EMAIL_ALREADY_BEEN_REGISTERED);
             } else {
-                // 发送邮件
-                emailService.sendSimpleMessage(emailAddress, Constant.EMAIL_SUBJECT, "欢迎注册，您的验证码是");
-                return  ApiRestResponse.success();
+                // 生成验证码
+                String verificationCode = EmailUtil.genVerificationCode();
+                Boolean saveEmailToRedis = emailService.saveEmailToRedis(emailAddress, verificationCode);
+                if (saveEmailToRedis) {
+                    // 发送邮件
+                    emailService.sendSimpleMessage(emailAddress, Constant.EMAIL_SUBJECT, "欢迎注册，您的验证码是" + verificationCode);
+                    return  ApiRestResponse.success();
+                } else {
+                    return ApiRestResponse.error(ImoocMallExceptionEnum.EMAIL_ALREADY_BEEN_SEND);
+                }
+
             }
         } else {
             return  ApiRestResponse.error(ImoocMallExceptionEnum.WRONG_EMAIL);
