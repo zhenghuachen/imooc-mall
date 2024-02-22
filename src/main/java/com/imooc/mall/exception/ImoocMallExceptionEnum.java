@@ -29,6 +29,9 @@ public enum ImoocMallExceptionEnum {
     WRONG_EMAIL(10023, "非法邮件地址"),
     EMAIL_ALREADY_BEEN_REGISTERED(10024, "email地址已被注册"),
     EMAIL_ALREADY_BEEN_SEND(10025, "email地址已发送，若无法收到，请稍候再试"),
+    NEED_EMAIL_ADDRESS(10026, "email不能为空"),
+    NEED_VERIFICATION_CODE(10027, "验证码不能为空"),
+    WRONG_VERIFICATION_CODE(10028, "验证码错误"),
     SYSTEM_ERROR(20000, "系统异常");
     /**
      * 异常码

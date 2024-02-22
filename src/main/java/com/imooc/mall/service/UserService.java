@@ -8,7 +8,7 @@ import com.imooc.mall.model.pojo.User;
  */
 public interface UserService {
     User getUser();
-    void register(String username, String  password) throws ImoocMallException;
+    void register(String username, String  password, String emailAddress) throws ImoocMallException;
 
     User login(String userName, String password) throws ImoocMallException;
 

@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void register(String userName, String password) throws ImoocMallException {
+    public void register(String userName, String password, String emailAddress) throws ImoocMallException {
         // 查询用户名是否存在，不允许重名
         User result = userMapper.selectByName(userName);
         if(result != null) {
@@ -36,6 +36,7 @@ public class UserServiceImpl implements UserService {
         // 写到数据库
         User user = new User();
         user.setUsername(userName);
+        user.setEmailAddress(emailAddress);
         // 数据库存储的密码需要加密
         try {
             user.setPassword(MD5Utils.getMD5Str(password));

@@ -65,4 +65,20 @@ public class EmailServiceImpl implements EmailService {
         }
         return false;
     }
+
+    @Override
+    public Boolean checkEmailAndCode (String emailAddress, String verificationCode) {
+        // 和Redis建立连接
+        RedissonClient client = Redisson.create();
+        RBucket<String> bucket = client.getBucket(emailAddress);
+        boolean exist = bucket.isExists();;
+        if (exist) {  // 说明验证码在Redis中有存储
+            String code = bucket.get(); //验证码
+            // redis里存储的验证码，和用户传过来的一致，则校验通过
+            if (code.equals(verificationCode)) {  // verificationCode为用户传入测验证码
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -15,4 +15,6 @@ public interface EmailService {
 
     // 将验证码和邮箱保存到Redis中
     Boolean saveEmailToRedis(String emailAddress, String verificationCode);
+
+    Boolean checkEmailAndCode(String emailAddress, String verificationCode);
 }
