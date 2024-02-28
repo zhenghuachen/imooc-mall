@@ -1,5 +1,7 @@
 package com.imooc.mall.controller;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.imooc.mall.common.ApiRestResponse;
 import com.imooc.mall.common.Constant;
 import com.imooc.mall.exception.ImoocMallException;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.Email;
+import java.util.Date;
 
 /**
  * 用户控制器
@@ -196,6 +199,68 @@ public class UserController {
             }
         } else {
             return  ApiRestResponse.error(ImoocMallExceptionEnum.WRONG_EMAIL);
+        }
+    }
+
+    @GetMapping("/loginWithJwt") // 定义URL
+    @ResponseBody  //Spring会自动将Controller方法的返回值转换为适当的响应格式（如JSON、XML等），并将其作为HTTP响应的实体内容返回。
+    public ApiRestResponse loginWithJwt(@RequestParam String userName, @RequestParam String password) throws ImoocMallException {
+        // userName和password不能为空校验
+        if(StringUtils.isEmpty(userName)){
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_USER_NAME);
+        }
+        if(StringUtils.isEmpty(password)){
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_PASSWORD);
+        }
+        // 密码长度不能小于8位
+        if(password.length()<8){
+            return ApiRestResponse.error(ImoocMallExceptionEnum.PASSWORD_TOO_SHORT);
+        }
+        User user = userService.login(userName,password);
+        user.setPassword(null);  // 保存用户信息时，不保存密码；避免password被直接返回，导致不安全
+        // 生成JWT
+        Algorithm algorithm = Algorithm.HMAC256(Constant.JWT_KEY);
+        String token = JWT.create()
+                .withClaim(Constant.USER_NAME, user.getUsername())
+                .withClaim(Constant.USER_ID, user.getId())
+                .withClaim(Constant.USER_ROLE, user.getRole())
+                // 过期时间
+                .withExpiresAt(new Date(System.currentTimeMillis() + Constant.EXPIRE_TIME))
+                .sign(algorithm);
+        return ApiRestResponse.success(token);
+    }
+
+    /**
+     * 管理员登录接口
+     */
+    @GetMapping("/adminLoginWithJwt")
+    @ResponseBody
+    public ApiRestResponse adminLoginWithJwt(@RequestParam("userName") String userName,
+                                             @RequestParam("password") String password)
+            throws ImoocMallException {
+        if (StringUtils.isEmpty(userName)) {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_USER_NAME);
+        }
+        if (StringUtils.isEmpty(password)) {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_PASSWORD);
+        }
+        User user = userService.login(userName, password);
+        //校验是否是管理员
+        if (userService.checkAdminRole(user)) {
+            //是管理员，执行操作
+            //保存用户信息时，不保存密码
+            user.setPassword(null);
+            Algorithm algorithm = Algorithm.HMAC256(Constant.JWT_KEY);
+            String token = JWT.create()
+                    .withClaim(Constant.USER_NAME, user.getUsername())
+                    .withClaim(Constant.USER_ID, user.getId())
+                    .withClaim(Constant.USER_ROLE, user.getRole())
+                    //过期时间
+                    .withExpiresAt(new Date(System.currentTimeMillis() + Constant.EXPIRE_TIME))
+                    .sign(algorithm);
+            return ApiRestResponse.success(token);
+        } else {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.NEED_ADMIN);
         }
     }
 

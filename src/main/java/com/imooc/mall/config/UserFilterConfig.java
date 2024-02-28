@@ -19,11 +19,12 @@ public class UserFilterConfig {
     }
     // 2.将Filter放入过滤器的链路中
     @Bean(name = "userFilterConf")  //userFilterConf避免于类名相同，冲突
-    public FilterRegistrationBean adminFilterConfig() {
+    public FilterRegistrationBean userFilterConf() {
         FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
         filterRegistrationBean.setFilter(userFilter());  // 设置过滤器调用的是userfilter()方法
         filterRegistrationBean.addUrlPatterns("/cart/*");  // 购物车
         filterRegistrationBean.addUrlPatterns("/order/*"); // 订单相关
+        filterRegistrationBean.addUrlPatterns("/user/update"); // 更新签名
         filterRegistrationBean.setName("userFilterConf");
         return filterRegistrationBean;
     }

@@ -31,7 +31,7 @@ public class CartController {
     @ApiOperation("购物车列表")
     public ApiRestResponse list () {
         // 内部获取用户ID，防止横向越权
-        List<CartVO> cartList = cartService.list(UserFilter.currentUser.getId());
+        List<CartVO> cartList = cartService.list(UserFilter.userThreadLocal.get().getId());
         return ApiRestResponse.success(cartList);
     }
 
@@ -39,7 +39,7 @@ public class CartController {
     @ApiOperation("添加商品到购物车")
     public ApiRestResponse add(@RequestParam Integer productId, @RequestParam Integer count) {
         //用户ID，商品ID，数量
-        List<CartVO> cartVOList = cartService.add(UserFilter.currentUser.getId(), productId, count);
+        List<CartVO> cartVOList = cartService.add(UserFilter.userThreadLocal.get().getId(), productId, count);
         return ApiRestResponse.success(cartVOList);
     }
 
@@ -47,7 +47,7 @@ public class CartController {
     @ApiOperation("更新购物车")
     public ApiRestResponse update(@RequestParam Integer productId, @RequestParam Integer count) {
         //用户ID，商品ID，数量
-        List<CartVO> cartVOList = cartService.update(UserFilter.currentUser.getId(), productId, count);
+        List<CartVO> cartVOList = cartService.update(UserFilter.userThreadLocal.get().getId(), productId, count);
         return ApiRestResponse.success(cartVOList);
     }
 
@@ -55,7 +55,7 @@ public class CartController {
     @ApiOperation("删除购物车")
     public ApiRestResponse delete(@RequestParam Integer productId) {
         // 不能传入userID,cartID, 否则可以删除别人的购物车
-        List<CartVO> cartVOList = cartService.delete(UserFilter.currentUser.getId(), productId);
+        List<CartVO> cartVOList = cartService.delete(UserFilter.userThreadLocal.get().getId(), productId);
         return ApiRestResponse.success(cartVOList);
     }
 
@@ -63,7 +63,7 @@ public class CartController {
     @ApiOperation("选择/不选择某商品")
     public ApiRestResponse select(@RequestParam Integer productId, @RequestParam Integer selected) {
         // 用户ID，商品ID，是否选中
-        List<CartVO> cartVOList = cartService.selectOrNot(UserFilter.currentUser.getId(), productId, selected);
+        List<CartVO> cartVOList = cartService.selectOrNot(UserFilter.userThreadLocal.get().getId(), productId, selected);
         return ApiRestResponse.success(cartVOList);
     }
 
@@ -71,7 +71,7 @@ public class CartController {
     @ApiOperation("全选择/全不选择某商品")
     public ApiRestResponse selectAll(@RequestParam Integer selected) {
         //用户ID，是否选中
-        List<CartVO> cartVOList = cartService.selectAllOrNot(UserFilter.currentUser.getId(), selected);
+        List<CartVO> cartVOList = cartService.selectAllOrNot(UserFilter.userThreadLocal.get().getId(), selected);
         return ApiRestResponse.success(cartVOList);
     }
 

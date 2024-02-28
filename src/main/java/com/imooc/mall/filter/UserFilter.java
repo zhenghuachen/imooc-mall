@@ -1,6 +1,14 @@
 package com.imooc.mall.filter;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.imooc.mall.common.Constant;
+import com.imooc.mall.exception.ImoocMallException;
+import com.imooc.mall.exception.ImoocMallExceptionEnum;
 import com.imooc.mall.model.pojo.User;
 import com.imooc.mall.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +27,8 @@ import java.io.PrintWriter;
 
 public class UserFilter implements Filter {
     // 静态变量保存currentUser
-    public static User currentUser; // 本次课程暂不考虑线程安全问题
+    public static ThreadLocal<User> userThreadLocal = new ThreadLocal();
+    public User currentUser = new User();
     @Autowired
     UserService userService;
 
@@ -43,19 +52,42 @@ public class UserFilter implements Filter {
          * 这样，我们就可以通过session对象来操作会话数据，例如保存用户登录信息、获取用户登录信息等。
          */
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-        HttpSession session = request.getSession();
-        currentUser = (User) session.getAttribute(Constant.IMOOC_MALL_USER);   //保存用户ID
-        if (currentUser == null){  // 检验是否登录,未登录则
-            PrintWriter out = new HttpServletResponseWrapper((HttpServletResponse) servletResponse).getWriter();
-            out.write("{\n"
-                    + "    \"status\": 10007,\n"
-                    + "    \"msg\": \"NEED_LOGIN\",\n"
-                    + "    \"data\": null\n"
-                    + "}");
-            out.flush();
-            out.close();
-            return;
+        // HttpSession session = request.getSession();
+        // currentUser = (User) session.getAttribute(Constant.IMOOC_MALL_USER);   //保存用户ID
+        String token = request.getHeader(Constant.JWT_TOKEN); // 前后端约定好key,此处为jwt_token
+        if ("OPTIONS".equals(request.getMethod())) {
+            filterChain.doFilter(servletRequest, servletResponse);
+        } else {
+            if (token == null){  // 检验是否登录,未登录则
+                PrintWriter out = new HttpServletResponseWrapper((HttpServletResponse) servletResponse).getWriter();
+                out.write("{\n"
+                        + "    \"status\": 10007,\n"
+                        + "    \"msg\": \"NEED_JWT_TOKEN\",\n"
+                        + "    \"data\": null\n"
+                        + "}");
+                out.flush();
+                out.close();
+                return;
+            }
+            // 验证JWT 是否有效
+            Algorithm algorithm = Algorithm.HMAC256(Constant.JWT_KEY);
+            JWTVerifier verifier = JWT.require(algorithm).build();
+            try {
+                DecodedJWT jwt = verifier.verify(token);
+                currentUser = new User();
+                currentUser.setId(jwt.getClaim(Constant.USER_ID).asInt());
+                currentUser.setRole(jwt.getClaim(Constant.USER_ROLE).asInt());
+                currentUser.setUsername(jwt.getClaim(Constant.USER_NAME).asString());
+                userThreadLocal.set(currentUser);
+            } catch (TokenExpiredException e) {
+                // token过期，抛出异常
+                throw new ImoocMallException(ImoocMallExceptionEnum.TOKEN_EXPIRED);
+            } catch (JWTDecodeException e) {
+                // 解码失败，抛出异常
+                throw new ImoocMallException(ImoocMallExceptionEnum.TOKEN_WRONG);
+            }
         }
+
         // 通过校验，则原有逻辑继续执行
         filterChain.doFilter(servletRequest, servletResponse);
     }

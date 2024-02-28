@@ -32,6 +32,8 @@ public enum ImoocMallExceptionEnum {
     NEED_EMAIL_ADDRESS(10026, "email不能为空"),
     NEED_VERIFICATION_CODE(10027, "验证码不能为空"),
     WRONG_VERIFICATION_CODE(10028, "验证码错误"),
+    TOKEN_EXPIRED(10029, "token过期"),
+    TOKEN_WRONG(10030, "token解析失败"),
     SYSTEM_ERROR(20000, "系统异常");
     /**
      * 异常码
