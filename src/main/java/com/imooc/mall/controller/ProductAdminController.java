@@ -165,4 +165,29 @@ public class ProductAdminController {
         PageInfo pageInfo = productService.listForAdmin(pageNum, pageSize);
         return ApiRestResponse.success(pageInfo);
     }
+
+    @ApiOperation("后台批量上传商品接口")
+    @PostMapping("/admin/upload/product")   // 上传文件的参数写法如下
+    public  ApiRestResponse uploadProduct(@RequestParam("file") MultipartFile multipartFile) throws IOException {
+        String fileName = multipartFile.getOriginalFilename(); // 获取文件原始名称
+        String suffixName = fileName.substring(fileName.lastIndexOf(".")); // 获取后缀名
+        // 生成uuid
+        UUID uuid = UUID.randomUUID();
+        String newFileName = uuid.toString() + suffixName;  // 新文件名
+        // 创建文件
+        File fileDirectory = new File(Constant.FILE_UPLOAD_DIR); // new File的参数是上传的位置
+        File destFile = new File(Constant.FILE_UPLOAD_DIR + newFileName);
+        if (!fileDirectory.exists()) {
+            if (!fileDirectory.mkdir()) {
+                throw new ImoocMallException(ImoocMallExceptionEnum.MKDIR_FAILED); // 文件夹创建失败
+            }
+        }
+        try {
+            multipartFile.transferTo(destFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        productService.addProductByExcel(destFile);
+        return ApiRestResponse.success();
+    }
 }

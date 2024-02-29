@@ -13,12 +13,21 @@ import com.imooc.mall.model.request.ProductListReq;
 import com.imooc.mall.model.vo.CategoryVO;
 import com.imooc.mall.service.CategoryService;
 import com.imooc.mall.service.ProductService;
+import com.imooc.mall.util.ExcelUtil;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -155,6 +164,75 @@ public class ProductServiceImpl implements ProductService {
                 getCategoryIds(categoryVO.getChildCategory(), categoryIds);
             }
         }
+    }
+
+    @Override
+    public void addProductByExcel(File destFile) throws IOException {
+        List<Product> products = readProductsFromExcel(destFile);
+        for (int i = 0; i < products.size(); i++) {
+            Product product =  products.get(i);
+            Product productOld = productMapper.selectByName(product.getName());
+            if (productOld != null) {
+                throw  new ImoocMallException(ImoocMallExceptionEnum.NAME_EXISTED);
+            }
+            int count = productMapper.insertSelective(product);
+            if (count == 0) {
+                throw new ImoocMallException(ImoocMallExceptionEnum.CREATE_FAILED);
+            }
+        }
+    }
+
+    // 将输入文件转换为商品列表
+    private List<Product> readProductsFromExcel(File excelFile) throws IOException {
+        ArrayList<Product> listProducts = new ArrayList<>();
+        FileInputStream inputStream = new FileInputStream(excelFile);  // 文件输入流
+
+        XSSFWorkbook workbook = new XSSFWorkbook(inputStream); // 新版本Excel
+        XSSFSheet firstsheet =  workbook.getSheetAt(0); // index从0还是1开始需要提前与需求方确认
+        Iterator<Row> iterator = firstsheet.iterator();
+        while(iterator.hasNext()) {
+            Row nextRow = iterator.next(); // 逐行遍历
+            Iterator<Cell> cellIterator = nextRow.cellIterator();  // 逐个单元格遍历
+            Product aProduct = new Product();
+            // 读取单元格填充aProduct
+            while (cellIterator.hasNext()) {
+                Cell nextCell = cellIterator.next();
+                int columnIndex = nextCell.getColumnIndex(); //获取单元格的索引
+                switch (columnIndex) {
+                    case 0:
+                        aProduct.setName((String) ExcelUtil.getCellValue(nextCell));
+                        break;
+                    case 1:
+                        aProduct.setImage((String) ExcelUtil.getCellValue(nextCell));
+                        break;
+                    case 2:
+                        aProduct.setDetail((String) ExcelUtil.getCellValue(nextCell));
+                        break;
+                    case 3:
+                        Double cellValue = (Double) ExcelUtil.getCellValue(nextCell); // excel中数字类型默认为Double
+                        aProduct.setCategoryId(cellValue.intValue());
+                        break;
+                    case 4:
+                        cellValue = (Double) ExcelUtil.getCellValue(nextCell); // excel中数字类型默认为Double
+                        aProduct.setPrice(cellValue.intValue());
+                        break;
+                    case 5:
+                        cellValue = (Double) ExcelUtil.getCellValue(nextCell); // excel中数字类型默认为Double
+                        aProduct.setStock(cellValue.intValue());
+                        break;
+                    case 6:
+                        cellValue = (Double) ExcelUtil.getCellValue(nextCell); // excel中数字类型默认为Double
+                        aProduct.setStatus(cellValue.intValue());
+                        break;
+                    default:
+                        break;
+                }
+            }
+            listProducts.add(aProduct);
+        }
+        workbook.close();
+        inputStream.close();
+        return listProducts;
     }
 
 }

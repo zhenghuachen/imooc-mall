@@ -10,6 +10,8 @@ import com.imooc.mall.model.request.ProductListReq;
 import com.imooc.mall.model.vo.CategoryVO;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -30,4 +32,7 @@ public interface ProductService {
     Product datail(Integer id);
 
     PageInfo list(ProductListReq productListReq);
+
+
+    void addProductByExcel(File destFile) throws IOException;
 }
