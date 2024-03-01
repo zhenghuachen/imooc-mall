@@ -166,41 +166,63 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
+    /**
+     * 从上传的Excel文件中读取商品信息并将商品逐个添加到数据库
+     * 首先调用readProductsFromExcel方法从Excel文件中读取商品信息并将
+     * 其存储在products列表中。
+     * 然后,通过循环遍历products列表中的每个商品，对每个商品进行如下处理：
+     * 首先通过商品名称查询数据库，如果数据库中已经存在同名商品，则抛出自定
+     * 义异常ImoocMallException，错误类型为NAME_EXISTED。
+     * 接着将商品信息插入到数据库中，如果插入失败，则同样抛出自定义异常
+     * ImoocMallException，错误类型为CREATE_FAILED
+     */
     @Override
     public void addProductByExcel(File destFile) throws IOException {
+        // 从Excel文件中读取商品信息,并转换为商品列表
         List<Product> products = readProductsFromExcel(destFile);
         for (int i = 0; i < products.size(); i++) {
             Product product =  products.get(i);
-            Product productOld = productMapper.selectByName(product.getName());
-            if (productOld != null) {
+            Product productOld = productMapper.selectByName(product.getName()); // 通过商品名称来查询数据库中是否已存在同名商品
+            if (productOld != null) {  // 查询到同名商品，则抛出自定义异常
                 throw  new ImoocMallException(ImoocMallExceptionEnum.NAME_EXISTED);
             }
-            int count = productMapper.insertSelective(product);
+            int count = productMapper.insertSelective(product); // 不存在同名商品，则向数据库中插入当前商品信息，存储受影响的行数
             if (count == 0) {
                 throw new ImoocMallException(ImoocMallExceptionEnum.CREATE_FAILED);
             }
         }
     }
 
-    // 将输入文件转换为商品列表
+    /**
+     * 私有方法,用于将输入的Excel文件转换为商品列表
+     * 首先创建了一个空的商品列表listProducts，然后通过文件输入流FileInputStream从给定的Excel文件
+     * 中获取输入流。
+     * 接着使用XSSFWorkbook类来加载Excel文件，获取第一个工作表firstsheet，并通过迭代器逐行遍历工作表
+     * 中的数据。对于每一行数据，再通过迭代器逐个单元格遍历，将单元格中的数据填充到一个 Product 对象中，
+     * 最终将该对象添加到商品列表中。
+     * 最后关闭工作簿和输入流，并返回填充好的商品列表。
+     * @param excelFile
+     * @return
+     * @throws IOException
+     */
     private List<Product> readProductsFromExcel(File excelFile) throws IOException {
-        ArrayList<Product> listProducts = new ArrayList<>();
-        FileInputStream inputStream = new FileInputStream(excelFile);  // 文件输入流
+        ArrayList<Product> listProducts = new ArrayList<>();  // 用于存储读取到的商品信息
+        FileInputStream inputStream = new FileInputStream(excelFile);  // 文件输入流 inputStream，用于读取Excel文件中的数据
 
-        XSSFWorkbook workbook = new XSSFWorkbook(inputStream); // 新版本Excel
-        XSSFSheet firstsheet =  workbook.getSheetAt(0); // index从0还是1开始需要提前与需求方确认
-        Iterator<Row> iterator = firstsheet.iterator();
+        XSSFWorkbook workbook = new XSSFWorkbook(inputStream); // 使用XSSFWorkbook类加载输入流，创建了一个新版本的Excel工作簿workbook
+        XSSFSheet firstsheet =  workbook.getSheetAt(0); // 获取第一个工作表,index从0还是1开始需要根据实际情况确认
+        Iterator<Row> iterator = firstsheet.iterator();  // 通过工作表的迭代器创建一个行迭代器iterator，用于逐行遍历工作表中的数据
         while(iterator.hasNext()) {
             Row nextRow = iterator.next(); // 逐行遍历
             Iterator<Cell> cellIterator = nextRow.cellIterator();  // 逐个单元格遍历
-            Product aProduct = new Product();
+            Product aProduct = new Product();  // 创建Product对象aProduct，用于存储当前行数据对应的商品信息
             // 读取单元格填充aProduct
             while (cellIterator.hasNext()) {
                 Cell nextCell = cellIterator.next();
-                int columnIndex = nextCell.getColumnIndex(); //获取单元格的索引
+                int columnIndex = nextCell.getColumnIndex(); //获取单元格的索引，即列号
                 switch (columnIndex) {
                     case 0:
-                        aProduct.setName((String) ExcelUtil.getCellValue(nextCell));
+                        aProduct.setName((String) ExcelUtil.getCellValue(nextCell)); // 针对不同的列号执行相应的操作，将单元格数据填充到aProduct对象的相应属性中
                         break;
                     case 1:
                         aProduct.setImage((String) ExcelUtil.getCellValue(nextCell));
@@ -228,10 +250,10 @@ public class ProductServiceImpl implements ProductService {
                         break;
                 }
             }
-            listProducts.add(aProduct);
+            listProducts.add(aProduct); // 将填充好数据的aProduct对象添加到商品列表listProducts中
         }
-        workbook.close();
-        inputStream.close();
+        workbook.close();  // 关闭Excel工作簿
+        inputStream.close();  // 关闭文件输入流
         return listProducts;
     }
 

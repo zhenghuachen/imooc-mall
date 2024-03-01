@@ -202,6 +202,7 @@ public class ProductAdminController {
             }
         }
         try {
+            // 将上传的文件内容保存到目标文件
             file.transferTo(destFile);
         } catch (IOException e) {
             e.printStackTrace();
