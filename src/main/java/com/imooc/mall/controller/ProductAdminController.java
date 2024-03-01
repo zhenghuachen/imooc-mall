@@ -10,6 +10,8 @@ import com.imooc.mall.model.request.AddProductReq;
 import com.imooc.mall.model.request.UpdateProductReq;
 import com.imooc.mall.service.ProductService;
 import io.swagger.annotations.ApiOperation;
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.geometry.Positions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -78,27 +81,7 @@ public class ProductAdminController {
         // 创建文件夹
         File fileDirectory = new File(Constant.FILE_UPLOAD_DIR);
         File destFile = new File(Constant.FILE_UPLOAD_DIR + newFileName);
-        if (!fileDirectory.exists()) { //文件夹不存在，则创建fileDirectory.mkdir()
-            if (!fileDirectory.mkdir()) {
-                throw new ImoocMallException(ImoocMallExceptionEnum.MKDIR_FAILED);
-            }
-        }
-        /**
-         * file.transferTo(destFile)是Java中java.nio.file.Files类的一个静态方法，用于
-         * 将一个文件从一个位置移动到另一个位置。它将文件file从当前位置移动到目标位置destFile，
-         * 并返回一个boolean值，表示移动是否成功。
-         * 在Java中，使用Files.copy()方法可以将文件从一个位置移动到另一个位置。例如，可以使用
-         * Files.copy(file.toPath(), destFile.toPath(),
-         * StandardCopyOption.REPLACE_EXISTING)将文件file移动到目标位置destFile。
-         * 需要注意的是，transferTo()方法将文件移动到目标位置，而copy()方法将文件复制到目标位置。
-         * 如果要将文件移动到目标位置，建议使用transferTo()方法，因为它可以更有效地处理大文件和
-         * 并发访问。
-         */
-        try {
-            file.transferTo(destFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        createFile(file, fileDirectory, destFile);
         /**
          * httpServletRequest.getRequestURL()是Java Servlet API中的一个方法，用于获取客户端
          * 请求的URL。返回一个字符串，表示客户端请求的完整URL，包括协议、主机名、端口号（如果有的话）
@@ -177,17 +160,51 @@ public class ProductAdminController {
         // 创建文件
         File fileDirectory = new File(Constant.FILE_UPLOAD_DIR); // new File的参数是上传的位置
         File destFile = new File(Constant.FILE_UPLOAD_DIR + newFileName);
-        if (!fileDirectory.exists()) {
+        createFile(multipartFile, fileDirectory, destFile);
+        productService.addProductByExcel(destFile);
+        return ApiRestResponse.success();
+    }
+
+    // 为了在图片地址中保存URL，传入HttpServletRequest
+    @PostMapping("admin/upload/image")
+    public ApiRestResponse uploadImage(HttpServletRequest httpServletRequest, @RequestParam("file") MultipartFile file) throws IOException {
+        // 获取上传文件原始名称
+        String fileName = file.getOriginalFilename(); //fileName: logo.png
+        // 获取图片文件格式,后缀
+        String suffixName = fileName.substring(fileName.lastIndexOf(".")); // suffixName: .png
+        // 生成文件名称UUID
+        UUID uuid = UUID.randomUUID();
+        String newFileName = uuid.toString() + suffixName; // newfileName: b93fee5a-271c-4922-b57e-99b5c3413d82.png
+        // 创建文件夹
+        File fileDirectory = new File(Constant.FILE_UPLOAD_DIR);
+        File destFile = new File(Constant.FILE_UPLOAD_DIR + newFileName);
+        createFile(file, fileDirectory, destFile);
+        // 对目标文件进行缩略图处理，并添加水印
+        Thumbnails.of(destFile) // 选择目标文件
+                .size(Constant.IMAGE_SIZE, Constant.IMAGE_SIZE) // 设置缩略图大小
+                .watermark(
+                        Positions.BOTTOM_RIGHT, // 设置水印位置为右下角
+                        ImageIO.read(new File(Constant.FILE_UPLOAD_DIR + Constant.WATER_MARK_JPG)), // 读取水印图片
+                        Constant.IMAGE_OPACITY // 设置水印透明度
+                )
+                .toFile(new File(Constant.FILE_UPLOAD_DIR + newFileName)); // 输出处理后的文件到指定路径
+        try {
+            return ApiRestResponse.success(getHost(new URI(httpServletRequest.getRequestURL()+""))+"/images/"+newFileName);
+        } catch (URISyntaxException e) {
+            return ApiRestResponse.error(ImoocMallExceptionEnum.UPLOAD_FAILED);
+        }
+    }
+
+    private static void createFile(MultipartFile file, File fileDirectory, File destFile) {
+        if (!fileDirectory.exists()) { //文件夹不存在，则创建fileDirectory.mkdir()
             if (!fileDirectory.mkdir()) {
-                throw new ImoocMallException(ImoocMallExceptionEnum.MKDIR_FAILED); // 文件夹创建失败
+                throw new ImoocMallException(ImoocMallExceptionEnum.MKDIR_FAILED);
             }
         }
         try {
-            multipartFile.transferTo(destFile);
+            file.transferTo(destFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        productService.addProductByExcel(destFile);
-        return ApiRestResponse.success();
     }
 }
