@@ -3,6 +3,7 @@ package com.imooc.mall.controller;
 import com.github.pagehelper.PageInfo;
 import com.imooc.mall.common.ApiRestResponse;
 import com.imooc.mall.common.Constant;
+import com.imooc.mall.common.ValidList;
 import com.imooc.mall.exception.ImoocMallException;
 import com.imooc.mall.exception.ImoocMallExceptionEnum;
 import com.imooc.mall.model.pojo.Product;
@@ -15,6 +16,7 @@ import net.coobird.thumbnailator.geometry.Positions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,12 +31,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.UUID;
 
 /**
  * 描述： 后台商品管理Controller
  */
 @RestController
+@Validated
 public class ProductAdminController {
     @Autowired
     ProductService productService;
@@ -207,5 +211,50 @@ public class ProductAdminController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    @ApiOperation("后台批量更新商品")
+    @PostMapping("/admin/product/batchUpdate")
+    public ApiRestResponse batchUpdateProduct(@Valid @RequestBody List<UpdateProductReq> updateProductReqList) {
+        for (int i = 0; i < updateProductReqList.size() ; i++) {
+            UpdateProductReq updateProductReq = updateProductReqList.get(i);
+            // 方法一： 手动校验
+            if (updateProductReq.getPrice() < 1) {
+                throw new ImoocMallException(ImoocMallExceptionEnum.PRICE_TO_LOW);
+            }
+            if (updateProductReq.getStock() > 10000) {
+                throw new ImoocMallException(ImoocMallExceptionEnum.STOCK_TO_MANY);
+            }
+            Product product = new Product();
+            BeanUtils.copyProperties(updateProductReq, product);
+            productService.update(product);
+        }
+
+        return ApiRestResponse.success();
+    }
+    @ApiOperation("后台批量更新商品,validList验证")
+    @PostMapping("/admin/product/batchUpdate2")
+    public ApiRestResponse batchUpdateProduct2(@Valid @RequestBody ValidList<UpdateProductReq> updateProductReqList) {
+        for (int i = 0; i < updateProductReqList.size() ; i++) {
+            UpdateProductReq updateProductReq = updateProductReqList.get(i);
+            // 方法二： 自定义列表
+            Product product = new Product();
+            BeanUtils.copyProperties(updateProductReq, product);
+            productService.update(product);
+        }
+
+        return ApiRestResponse.success();
+    }
+
+    @ApiOperation("后台批量更新商品,@Validated验证")
+    @PostMapping("/admin/product/batchUpdate3")
+    public ApiRestResponse batchUpdateProduct3(@Valid @RequestBody List<UpdateProductReq> updateProductReqList) {
+        for (int i = 0; i < updateProductReqList.size() ; i++) {
+            UpdateProductReq updateProductReq = updateProductReqList.get(i);
+            // 方法三： @validated
+            Product product = new Product();
+            BeanUtils.copyProperties(updateProductReq, product);
+            productService.update(product);
+        }
+        return ApiRestResponse.success();
     }
 }

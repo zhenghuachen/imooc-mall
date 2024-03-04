@@ -4,15 +4,20 @@ import com.imooc.mall.common.ApiRestResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.bind.BindResult;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 描述： 处理统一异常的handlar
@@ -84,6 +89,19 @@ public class GlobalExceptionhandlar {
             return ApiRestResponse.error(ImoocMallExceptionEnum.REQUEST_PARAM_ERROR);
         }
         return ApiRestResponse.error(ImoocMallExceptionEnum.REQUEST_PARAM_ERROR.getCode(), list.toString());
+    }
+
+    @ExceptionHandler
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public ApiRestResponse handle(ConstraintViolationException exception) {
+        Set<ConstraintViolation<?>> violations = exception.getConstraintViolations();
+        StringBuilder builder = new StringBuilder();
+        for (ConstraintViolation<?> violation: violations) {
+            builder.append(violation.getMessage());
+            break;
+        }
+        return ApiRestResponse.error(ImoocMallExceptionEnum.REQUEST_PARAM_ERROR.getCode(), builder.toString());
     }
 
 }
