@@ -61,8 +61,8 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     OrderItemMapper orderItemMapper;
 
-    @Value("${file.upload.ip}")
-    String ip;
+    @Value("${file.upload.uri}")
+    String uri;
 
     @Autowired
     UserService userService;
@@ -270,7 +270,7 @@ public class OrderServiceImpl implements OrderService {
             order.setEndTime(new Date());  // 设置完结时间
             orderMapper.updateByPrimaryKeySelective(order);
         } else{
-            throw new ImoocMallException(ImoocMallExceptionEnum.WRONG_ORDER_STATUS);
+            throw new ImoocMallException(ImoocMallExceptionEnum.CANCEL_WRONG_ORDER_STATUS);
         }
     }
 
@@ -289,7 +289,7 @@ public class OrderServiceImpl implements OrderService {
          */
         ServletRequestAttributes attributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
-        String address = ip + ":" + request.getLocalPort();
+        String address = uri;
 //        try {
 //            // 获取本机电脑的局域网IP，复杂网络环境下此方法获取的IP并不准确,调试使用，部署前删除
 //            ip = InetAddress.getLocalHost().getHostAddress();
@@ -331,7 +331,7 @@ public class OrderServiceImpl implements OrderService {
             order.setPayTime(new Date());
             orderMapper.updateByPrimaryKeySelective(order);
         } else {
-            throw new ImoocMallException(ImoocMallExceptionEnum.WRONG_ORDER_STATUS);
+            throw new ImoocMallException(ImoocMallExceptionEnum.PAY_WRONG_ORDER_STATUS);
         }
     }
 
@@ -349,7 +349,7 @@ public class OrderServiceImpl implements OrderService {
             order.setDeliveryTime(new Date());
             orderMapper.updateByPrimaryKeySelective(order);
         } else {
-            throw new ImoocMallException(ImoocMallExceptionEnum.WRONG_ORDER_STATUS);
+            throw new ImoocMallException(ImoocMallExceptionEnum.DELIVER_WRONG_ORDER_STATUS);
         }
     }
 
@@ -371,7 +371,7 @@ public class OrderServiceImpl implements OrderService {
             order.setEndTime(new Date());
             orderMapper.updateByPrimaryKeySelective(order);
         } else {
-            throw new ImoocMallException(ImoocMallExceptionEnum.WRONG_ORDER_STATUS);
+            throw new ImoocMallException(ImoocMallExceptionEnum.FINISH_WRONG_ORDER_STATUS);
         }
     }
 

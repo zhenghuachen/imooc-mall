@@ -36,6 +36,10 @@ public enum ImoocMallExceptionEnum {
     TOKEN_WRONG(10030, "token解析失败"),
     PRICE_TO_LOW(10031, "价格过低"),
     STOCK_TO_MANY(10032, "库存不能大于10000"),
+    CANCEL_WRONG_ORDER_STATUS(10033, "订单状态有误，付款后暂不支持取消订单"),
+    PAY_WRONG_ORDER_STATUS(10034, "订单状态有误，仅能在未付款时付款"),
+    DELIVER_WRONG_ORDER_STATUS(10035, "订单状态有误，仅能在付款后发货"),
+    FINISH_WRONG_ORDER_STATUS(10036, "订单状态有误，仅能在发货后完成订单"),
     SYSTEM_ERROR(20000, "系统异常");
     /**
      * 异常码

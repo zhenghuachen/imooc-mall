@@ -15,6 +15,7 @@ import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,6 +44,8 @@ public class ProductAdminController {
     @Autowired
     ProductService productService;
 
+    @Value("${file.upload.uri}")
+    String uri;
     /**
      * 商品添加
      * @param addProductReq
@@ -86,6 +89,8 @@ public class ProductAdminController {
         File fileDirectory = new File(Constant.FILE_UPLOAD_DIR);
         File destFile = new File(Constant.FILE_UPLOAD_DIR + newFileName);
         createFile(file, fileDirectory, destFile);
+        String address = uri;
+        return ApiRestResponse.success("http://" +address + "/images/" + newFileName);
         /**
          * httpServletRequest.getRequestURL()是Java Servlet API中的一个方法，用于获取客户端
          * 请求的URL。返回一个字符串，表示客户端请求的完整URL，包括协议、主机名、端口号（如果有的话）
@@ -95,12 +100,12 @@ public class ProductAdminController {
          * 需要注意的是，上述方法返回的URL不包括查询参数（如?param1=value1&param2=value2），
          * 因为这些参数通常用于传递请求参数，而不是用于表示请求的资源。
          */
-        try {
-
-            return ApiRestResponse.success(getHost(new URI(httpServletRequest.getRequestURL()+""))+"/images/"+newFileName);
-        } catch (URISyntaxException e) {
-            return ApiRestResponse.error(ImoocMallExceptionEnum.UPLOAD_FAILED);
-        }
+//        try {
+//
+//            return ApiRestResponse.success(getHost(new URI(httpServletRequest.getRequestURL()+""))+"/images/"+newFileName);
+//        } catch (URISyntaxException e) {
+//            return ApiRestResponse.error(ImoocMallExceptionEnum.UPLOAD_FAILED);
+//        }
     }
     // 裁剪URI，获取IP和端口号
     private URI getHost(URI uri) {  //uri:http://127.0.0.1:8083/admin/upload/file
@@ -192,11 +197,13 @@ public class ProductAdminController {
                         Constant.IMAGE_OPACITY // 设置水印透明度
                 )
                 .toFile(new File(Constant.FILE_UPLOAD_DIR + newFileName)); // 输出处理后的文件到指定路径
-        try {
-            return ApiRestResponse.success(getHost(new URI(httpServletRequest.getRequestURL()+""))+"/images/"+newFileName);
-        } catch (URISyntaxException e) {
-            return ApiRestResponse.error(ImoocMallExceptionEnum.UPLOAD_FAILED);
-        }
+        String address = uri;
+        return ApiRestResponse.success("http://" +address + "/images/" + newFileName);
+//        try {
+//            return ApiRestResponse.success(getHost(new URI(httpServletRequest.getRequestURL()+""))+"/images/"+newFileName);
+//        } catch (URISyntaxException e) {
+//            return ApiRestResponse.error(ImoocMallExceptionEnum.UPLOAD_FAILED);
+//        }
     }
 
     private static void createFile(MultipartFile file, File fileDirectory, File destFile) {
