@@ -95,12 +95,14 @@ public class GlobalExceptionhandlar {
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public ApiRestResponse handle(ConstraintViolationException exception) {
+        // 从exception中获取到所有的验证违规信息，并存储在一个Set集合中
         Set<ConstraintViolation<?>> violations = exception.getConstraintViolations();
+        // 创建一个StringBuilder对象，用于构建错误信息的字符串
         StringBuilder builder = new StringBuilder();
-        for (ConstraintViolation<?> violation: violations) {
-            builder.append(violation.getMessage());
-            break;
-        }
+        for (ConstraintViolation<?> violation: violations) {  // 遍历违规信息的集合
+            builder.append(violation.getMessage());  // 将当前违规信息的错误消息追加到builder中
+            break;   // 在处理完第一条违规信息后跳出循环
+        } // 传入错误码和错误消息构建一个响应对象，并将其作为方法的返回值
         return ApiRestResponse.error(ImoocMallExceptionEnum.REQUEST_PARAM_ERROR.getCode(), builder.toString());
     }
 

@@ -10,6 +10,14 @@ import java.util.List;
 
 /**
  * 具有检验能力的List
+ * ValidList类实现了List接口，并在内部包含了一个使用了@Valid注解的List对象。
+ * 这个类的作用是具有校验能力的列表，可以对其中的元素进行验证；在使用ValidList类
+ * 的时候，如果给定的元素类上有相应的校验规则，则可以通过@Valid注解来触发校验。
+ * 除了包含校验能力的列表属性外，ValidList类还实现了List接口中的所有方法，
+ * 这些方法会直接调用内部的 list 对象的对应方法来完成相应的操作。这意味着可以像
+ * 使用普通列表一样使用 ValidList，同时也能够享受到对元素的校验功能。
+ * 总之，ValidList 类的设计在需要对列表元素进行校验的情况下，方便地使用Bean
+ * Validation API提供的功能，同时也保留了普通列表的所有操作特性。
  */
 public class ValidList<E> implements List<E> {
     @Valid
