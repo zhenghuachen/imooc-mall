@@ -14,9 +14,11 @@ import com.imooc.mall.model.dao.ProductMapper;
 import com.imooc.mall.model.pojo.Order;
 import com.imooc.mall.model.pojo.OrderItem;
 import com.imooc.mall.model.pojo.Product;
+import com.imooc.mall.model.query.OrderStatisticsQuery;
 import com.imooc.mall.model.request.CreateOrderReq;
 import com.imooc.mall.model.vo.CartVO;
 import com.imooc.mall.model.vo.OrderItemVO;
+import com.imooc.mall.model.vo.OrderStatisticsVO;
 import com.imooc.mall.model.vo.OrderVO;
 import com.imooc.mall.service.CartService;
 import com.imooc.mall.service.OrderService;
@@ -373,6 +375,15 @@ public class OrderServiceImpl implements OrderService {
         } else {
             throw new ImoocMallException(ImoocMallExceptionEnum.FINISH_WRONG_ORDER_STATUS);
         }
+    }
+
+    @Override
+    public List<OrderStatisticsVO> statistics(Date startDate, Date endDate) {
+        OrderStatisticsQuery orderStatisticsQuery = new OrderStatisticsQuery();
+        orderStatisticsQuery.setStartDate(startDate);
+        orderStatisticsQuery.setEndDate(endDate);
+        List<OrderStatisticsVO> orderStatisticsVOS = orderMapper.selectOrderStatistics(orderStatisticsQuery);
+        return orderStatisticsVOS;
     }
 
 }

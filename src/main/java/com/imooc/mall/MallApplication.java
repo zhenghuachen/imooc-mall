@@ -6,6 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.util.TimeZone;
+
 @SpringBootApplication
 @MapperScan(basePackages = "com.imooc.mall.model.dao")
 @EnableSwagger2
@@ -13,6 +15,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class MallApplication {
 
 	public static void main(String[] args) {
+		System.out.println(TimeZone.getDefault());
 		SpringApplication.run(MallApplication.class, args);
 	}
 

@@ -1,6 +1,9 @@
 package com.imooc.mall.model.dao;
 
 import com.imooc.mall.model.pojo.Order;
+import com.imooc.mall.model.query.OrderStatisticsQuery;
+import com.imooc.mall.model.vo.OrderStatisticsVO;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -26,4 +29,5 @@ public interface OrderMapper {
     // 管理员获取所有订单信息
     List<Order> selectAllForAdmin();
 
+    List<OrderStatisticsVO> selectOrderStatistics(@Param("query")OrderStatisticsQuery query);
 }
