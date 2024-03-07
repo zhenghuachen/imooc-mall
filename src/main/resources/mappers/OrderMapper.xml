@@ -229,12 +229,53 @@
     from imooc_mall_order
     order by create_time desc
   </select>
+  <!--
+    <resultMap id="listOrderStatisticsMap" type="com.imooc.mall.model.vo.OrderStatisticsVO">：
+    定义了一个结果映射规则，将查询结果映射到名为listOrderStatisticsMap的resultMap中。
+    id="listOrderStatisticsMap"：指定resultMap的唯一标识符。
+    type="com.imooc.mall.model.vo.OrderStatisticsVO"：指定将查询结果映射到OrderStatisticsVO类型的对象中。
+
+    <result column="days" jdbcType="TIMESTAMP" property="days"/>：
+    将查询结果中名为days的列映射到Java对象的属性days上，该属性对应OrderStatisticsVO类中的属性。
+    jdbcType="TIMESTAMP"：指定数据库列的数据类型。
+    property="days"：指定Java对象中的属性名称。
+    
+    <result column="amount" jdbcType="INTEGER" property="amount"/>：
+    将查询结果中名为amount的列映射到Java对象的属性amount上，该属性对应OrderStatisticsVO类中的属性。
+    jdbcType="INTEGER"：指定数据库列的数据类型。
+    property="amount"：指定Java对象中的属性名称。
+  -->
 
   <resultMap id="listOrderStatisticsMap" type="com.imooc.mall.model.vo.OrderStatisticsVO">
     <result column="days" jdbcType="TIMESTAMP" property="days"/>
     <result column="amount" jdbcType="INTEGER" property="amount"/>
   </resultMap>
-
+  <!--
+    用于从名为 imooc_mall_order 的表中查询订单统计信息。接下来我将逐行对这段代码进行解释：
+    <select id="selectOrderStatistics" resultMap="listOrderStatisticsMap">
+    这是一个XML文件中定义的一个SQL查询语句，它的ID是selectOrderStatistics，并且使用listOrderStatisticsMap作为结果映射（resultMap）。
+    select date_format(from_unixtime(UNIX_TIMESTAMP(create_time)), "%Y-%m-%d") as days, count(*) as amount
+    这一行是SQL查询语句的主体部分，它使用了MySQL中的函数，将create_time转换为日期格式%Y-%m-%d并命名为days，同时使用count(*)统计每个日期的订单数量，并命名为amount。
+    from imooc_mall_order
+    这表示从名为 imooc_mall_order 的表中进行数据查询。
+    <where>
+      标识接下来是一个查询条件的起始标记。
+      <if test="query.startDate != null" >
+      这表示如果传入的参数query.startDate不为空，则执行下面的条件语句。
+      <![CDATA[and create_time >= #{query.startDate}]]>
+      这是一个条件语句，如果query.startDate不为空，则会添加条件create_time >= #{query.startDate}。
+      <if test="query.endDate != null" >
+      这表示如果传入的参数query.endDate不为空，则执行下面的条件语句。
+      <![CDATA[and create_time <= #{query.endDate}]]>
+      这是另一个条件语句，如果query.endDate不为空，则会添加条件 create_time <= #{query.endDate}。
+    </where>
+    标识查询条件结束。
+    group by days
+    这表示根据 days 字段进行分组。
+    order by days
+    这表示按照 days 字段进行升序排序。
+    整体上，这段代码是一个灵活的查询语句，根据传入的参数动态生成不同的查询条件，并对查询结果进行日期分组和排序。
+  -->
   <select id="selectOrderStatistics" resultMap="listOrderStatisticsMap">
     select date_format(from_unixtime(UNIX_TIMESTAMP(create_time)), "%Y-%m-%d") as days, count(*) as amount
     from imooc_mall_order
