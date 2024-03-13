@@ -89,7 +89,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @Cacheable(value = "listCategoryForCustomer")
+    @Cacheable(value = "listCategoryForCustomer")  // redis缓存会将数据保存为String直接存储
     // @Cacheable注解，用于实现缓存，标记一个方法的结果应该被缓存
     // 返回CategoryVO 列表
     public List<CategoryVO> listCategoryForCustomer(Integer parentId) {
