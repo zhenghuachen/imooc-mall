@@ -54,10 +54,11 @@ public class UserFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         // HttpSession session = request.getSession();
         // currentUser = (User) session.getAttribute(Constant.IMOOC_MALL_USER);   //保存用户ID
-        String token = request.getHeader(Constant.JWT_TOKEN); // 前后端约定好key,此处为jwt_token
         if ("OPTIONS".equals(request.getMethod())) {
+            // 放行预检请求，按照原有逻辑执行
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
+            String token = request.getHeader(Constant.JWT_TOKEN); // 前后端约定好key,此处为jwt_token
             if (token == null){  // 检验是否登录,未登录则
                 PrintWriter out = new HttpServletResponseWrapper((HttpServletResponse) servletResponse).getWriter();
                 out.write("{\n"
@@ -86,9 +87,8 @@ public class UserFilter implements Filter {
                 // 解码失败，抛出异常
                 throw new ImoocMallException(ImoocMallExceptionEnum.TOKEN_WRONG);
             }
+            // 通过校验，则原有逻辑继续执行
+            filterChain.doFilter(servletRequest, servletResponse);
         }
-
-        // 通过校验，则原有逻辑继续执行
-        filterChain.doFilter(servletRequest, servletResponse);
     }
 }

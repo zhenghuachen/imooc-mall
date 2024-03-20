@@ -84,7 +84,7 @@ public class UserController {
      * 登录接口
      * 传参除了userName和password增加HttpSession 用来记录登录状态
      */
-    @PostMapping("/login") // 定义URL
+    @GetMapping("/login") // 定义URL
     @ResponseBody  //Spring会自动将Controller方法的返回值转换为适当的响应格式（如JSON、XML等），并将其作为HTTP响应的实体内容返回。
     public ApiRestResponse login(@RequestParam("userName") String userName, @RequestParam("password") String password, HttpSession session) throws ImoocMallException {
         // userName和password不能为空校验

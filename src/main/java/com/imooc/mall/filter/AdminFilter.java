@@ -53,11 +53,12 @@ public class AdminFilter implements Filter {
          * 如果找不到，则创建一个新的会话并返回。
          * 这样，我们就可以通过session对象来操作会话数据，例如保存用户登录信息、获取用户登录信息等。
          */
-        HttpServletResponse resp = (HttpServletResponse) servletResponse;
+        // HttpServletResponse resp = (HttpServletResponse) servletResponse;
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         // HttpSession session = request.getSession();
         // User currentUser = (User) session.getAttribute(Constant.IMOOC_MALL_USER);
         if ("OPTIONS".equals(request.getMethod())) {
+            // 放行预检请求，按照原有逻辑执行
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
             String token = request.getHeader(Constant.JWT_TOKEN);
