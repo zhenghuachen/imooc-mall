@@ -51,11 +51,13 @@ public class ImoocMallWebMvcConfig implements WebMvcConfigurer {
                 "classpath:/META-INF/resources/webjars/");
     }
     @Override
+    // 公共方法用于配置CORS跨域访问规则，接受一个CorsRegistry对象作为参数，用于配置CORS规则
     public void addCorsMappings(CorsRegistry registry) {
+        // registry对象调用addMapping方法，指定允许跨域请求的路径为所有路径（"/**"）
         registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowedMethods("GET", "POST", "PUT","OPTIONS", "DELETE")
-                .maxAge(3600)
-                .allowCredentials(true);
+                .allowedOrigins("*")  // 设置允许跨域请求的来源，此处为允许所有来源
+                .allowedMethods("GET", "POST", "PUT","OPTIONS", "DELETE")  // 设置允许的HTTP请求方法
+                .maxAge(3600)  // 设置预检请求的有效期，单位为秒
+                .allowCredentials(true);  // 设置是否允许请求携带认证信息（如cookies、HTTP认证及客户端SSL证明）,此处允许请求携带认证信息
     }
 }
